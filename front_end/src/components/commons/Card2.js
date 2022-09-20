@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
-import Ingredient_cucumber from "assets/img/Ingredient_cucumber.jpg";
+import { Link } from "react-router-dom";
+import heart from "assets/img/icon_filled_heart.png";
 
 const Container = styled.div`
   display: flex;
@@ -10,15 +11,32 @@ const Container = styled.div`
 `
 
 const CardItem = styled.div`
-  width: 16rem;
+  width: 18rem;
   height: 24.5rem;
-  padding: 0 1rem;
+  margin: 0 1rem;
+  position: relative;
+  opacity: 1;
+  display: block;
+  transition: .5s ease;
+  backface-visibility: hidden;
+  object-fit: cover;
+  &:hover .image-wrapper{
+    background-color: black;
+  }
+  &:hover .image {
+    background-color: black;
+    opacity: 0.3;
+  }
+  &:hover .middle {
+    opacity: 1;
+  }
 `
 
 const ImgWrapper = styled.div`
   overflow: hidden;
-  height: 16rem;
-  width: 16rem;
+  height: 18rem;
+  width: 18rem;
+
 `
 
 const Img = styled.img`
@@ -30,14 +48,21 @@ const Img = styled.img`
 
 const TextContainer = styled.div`
   .title {
-    font-family: Playfair Display;
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-family: Work Sans;
+    font-size: 1.2rem;
+    font-weight: 500;
+    max-width: 16rem;
     margin-top: 0.5rem;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
-  .category {
+  .keywords {
     font-size: 0.87rem;
-    margin: 1rem 0 0 0;
+    margin: 0;
   }
   .line {
     margin: 0.5rem 0;
@@ -49,7 +74,29 @@ const TextContainer = styled.div`
 const SpaceBetweenContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: end;
+  align-items: center;
+`
+
+const HoverText = styled.div`
+  transition: .5s ease;
+  opacity: 0;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  text-align: center;
+`
+const TextContent = styled.div`
+  color: white;
+  font-size: 16px;
+  font-style: italic;
+  padding: 1rem auto;
+  img {
+    width: 2rem;
+    height: auto;
+    margin: 0 0 1rem 0;
+  }
 `
 
 const Arrow = () => {
@@ -59,27 +106,37 @@ const Arrow = () => {
 }
 
 
-const Card2 = () => {
+const Card2 = ({ name, images, keywords, recipe_seq }) => {
+  const likeCnt = 39
   return (
-    <>
-      <div>
-        <Container>
+
+      <Container>
+        <Link to={`/recipes/${recipe_seq}`} style={{color: 'black', textDecoration : "none"}}>
           <CardItem>
-            <ImgWrapper>
-              <Img src={Ingredient_cucumber} />
+            <ImgWrapper className='image-wrapper'>
+              <Img src={images} className="image" />
             </ImgWrapper>
             <TextContainer>
+              <div style={{minHeight: "3.5rem"}}>
+                <div className='title'>{name}</div>
+                <div className="line" />
+              </div>
               <SpaceBetweenContainer>
-                <div className='title'>Recipe Name</div>
-                <Arrow />
+              <div className="keywords">{ keywords.length === 0 ? "DELICIOUS" : keywords[0]["keyword_name"] }</div>
+              <Arrow />
               </SpaceBetweenContainer>
-              <div className="line" />
-              <div className='category'>CATEGORY</div>
             </TextContainer>
+            <HoverText className="middle">
+              <TextContent className="text">
+                <img src={heart} alt=""/>
+                <div>{likeCnt} PEOPLE</div>
+                <div>LIKED THIS RECIPE</div>
+              </TextContent>
+            </HoverText>
           </CardItem>
-        </Container>
-      </div>
-    </>
+        </Link>
+      </Container>
+
   );
 };
 

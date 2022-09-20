@@ -5,6 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { isLoginState, userInfoState } from '../../../atoms/atoms';
 import { useNavigate } from 'react-router-dom';
 import { googleLogin } from '../../../api/AuthApi';
+import { Alert } from "components/commons/Alert";
 
 const Container = styled.div`
   margin: auto;
@@ -30,14 +31,17 @@ const LoginGoogle = () => {
       try {
         setIsLoginState(true);
         setUserInfoState(result.user.member_seq);
-        
-        navigate("/category");
+        if (result.user.isSurvey === false) {
+          navigate("/survey");
+        } else {
+          navigate("/category");
+        }
       }
       catch {
         window.location.reload();
       }
     } else {
-      alert("로그인 정보를 확인해주세요.");
+      Alert("Please check your information.");
     }
   }
   

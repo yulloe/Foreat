@@ -9,14 +9,14 @@ const Container = styled.div`
 `
 
 const TextContainer = styled.div`
-  margin: 5rem 0 2rem 0;
+  margin: 5rem 0 1rem 0;
   display: block;
   justify-items: start;
   .text {
     display: flex;
     text-align: left;
     font-family: Playfair Display;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 600;
   }
   .line {
@@ -31,8 +31,7 @@ const CardContainer = styled.div`
   justify-content: center;
 `
 
-const RelatedRecipeList = () => {
-
+const RelatedRecipeList = ({ ingredientRecommend, nutritionRecommned }) => {
   return (
     <Container>
       <TextContainer>
@@ -40,20 +39,24 @@ const RelatedRecipeList = () => {
         <div className="line"/>
       </TextContainer>
       <CardContainer>
-        <Card2 />
-        <Card2 />
-        <Card2 />
-        <Card2 />
+        { ingredientRecommend ? ingredientRecommend.map((recipe) => ( 
+            <Card2
+              key={recipe.recipe_seq}
+              {...recipe}
+            />
+          )) : null }
       </CardContainer>
       <TextContainer>
         <div className="text">Nutritionally Balanced</div>
         <div className="line"/>
       </TextContainer>
       <CardContainer>
-        <Card2 />
-        <Card2 />
-        <Card2 />
-        <Card2 />
+      { nutritionRecommned ? nutritionRecommned.map((recipe) => ( 
+            <Card2
+              key={recipe.recipe_seq}
+              {...recipe}
+            />
+          )) : null }
       </CardContainer>
     </Container>
   )

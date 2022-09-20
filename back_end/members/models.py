@@ -1,3 +1,4 @@
+import email
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
@@ -8,14 +9,16 @@ from foreat import settings
 
 # Create your models here.
 class MemberManager(BaseUserManager):
-    def create_user(self, nickname, password=None, profile_image_url=None, kakao_id=None):
+    def create_user(self, nickname, email=None, password=None, profile_image_url=None, kakao_id=None, google_id=None):
         # if not email:
         #     raise ValueError('Users must have an email address')
 
         user = self.model(
             nickname = nickname,
             profile_image_url = profile_image_url,
+            email = email,
             kakao_id = kakao_id,
+            google_id = google_id,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -78,7 +81,7 @@ class LikedRecipe(models.Model):
         db_table = 'tb_liked_recipe'
 
 
-class MemberSurvey(models.Model):
+class Survey(models.Model):
     member_seq = models.OneToOneField(Member, on_delete=models.CASCADE, primary_key=True)
     age = models.IntegerField(null=True, blank=True)
     gender = models.BooleanField(null=True, blank=True) # True: male, False=female
@@ -108,17 +111,26 @@ class MemberSurvey(models.Model):
     allergy = models.ManyToManyField(Allergy, related_name='members', through="MemberAllergy")
 
     class Meta:
-        db_table = 'tb_member_survey'
+        db_table = 'tb_survey'
+
+class Recommend(models.Model):
+    member_seq = models.OneToOneField(Member, on_delete=models.CASCADE, primary_key=True)
+    content_base = models.TextField(null=True, blank=True)
+    collaborate_base = models.TextField(null=True, blank=True)
+    survey_base = models.TextField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'tb_recommend'
 
 class LikedIngredient(models.Model):
-    member_seq = models.ForeignKey(MemberSurvey, on_delete=models.CASCADE)
+    member_seq = models.ForeignKey(Survey, on_delete=models.CASCADE)
     ingredient_seq = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'tb_liked_ingredient'
+        db_table = 'tb_member_liked_ingredient'
 
 class MemberAllergy(models.Model):
-    member_seq = models.ForeignKey(MemberSurvey, on_delete=models.CASCADE)
+    member_seq = models.ForeignKey(Survey, on_delete=models.CASCADE)
     allergy_seq = models.ForeignKey(Allergy, on_delete=models.CASCADE)
 
     class Meta:

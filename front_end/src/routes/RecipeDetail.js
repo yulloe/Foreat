@@ -8,48 +8,61 @@ import RelatedRecipeList from "components/recipeDetail/RelatedRecipeList";
 import Ingredients from "components/recipeDetail/Ingredients";
 import Instructions from "components/recipeDetail/Instructions";
 import ReviewList from "components/recipeDetail/ReviewList";
+import KeywordList from "components/recipeDetail/KeywordList";
 import { getRecipeDetail, likeRecipe } from "api/RecipeDetailApi";
 
 const Container = styled.div`
   padding: 6rem 10rem;
+  display: grid;
+  grid-template-columns: 1fr;
 `
+
 const Wrapper = styled.div`
   display: flex;
   justify-content:${(props) => (props.jc ? props.jc : "center")};
   flex-wrap: wrap;
 `
-const ImgWrapper = styled.div`
-  width: 45%;
-  overflow: hidden;
-  margin: 0 1rem; 
-  background-position: center;
-`
+
+// const ImgWrapper = styled.div`
+//   display: block;
+//   width: 100%;
+//   height: 70%;
+//   overflow: hidden;
+//   background-position: center;
+// `
+
 const Img = styled.img`
   width: 100%;
-  height: 100%;
+  height: 80%;
   object-fit: cover;
 `
+
 const IngredientWrapper = styled.div`
   display: flex;
   justify-content: center;
 `
 
-const RecipeDetail = (props) => {
+const RecipeDetail = () => {
 
   const location = useLocation();
   let recipeId = Number(location.pathname.split("/")[2]);
-  const [recipe, setRecipe] = useState({}); 
+  // const [ recipeId, setRecipeId ] = useState(Number(location.pathname.split("/")[2])) // 이게 아닌지?
+  
+  const [ recipe, setRecipe ] = useState([])
+
+  const getRecipe = async () => {
+    const result = await getRecipeDetail(recipeId);
+    setRecipe(result)
+    console.log("getRecipeDetail", result)
+  }
+
   const [like, setLike] = useState(false); // recipe detail 조회할 때 User가 좋아요 했는지 정보 보여줘야됨, 아래가 맞는 코드인데 아직 
   // const [like, setLike] = useState(recipe.isUserLiked);  
 
   useEffect(() => {
-    getRecipeDetail(recipeId).then((res) => {
-      setRecipe(res)
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+    getRecipe();
   }, [])
+
   
   // like 정보 불러오기
   const getLike = async () => {
@@ -73,28 +86,15 @@ const RecipeDetail = (props) => {
     <div>
       <Container>
         <Wrapper>
-          <ImgWrapper>
+          <div style={{display: "flex", flexDirection: "column", maxWidth:"35%"}}>
             <Img src={recipe.images} />
-          </ImgWrapper>
+            <KeywordList keywords={recipe.keywords}/>
+          </div>
           <RecipeInfo 
-            recipeId={recipe.recipe_seq}
-            name={recipe.name}
             toggleLike={toggleLike}  // 자식 컴포넌트에서 함수 실행하면 부모컴포넌트에서 결과 반영됨
             like={like} // useState에 있는 like 보내줌
             categories={(recipe.categories ? recipe.categories : "-")}
-            servings={recipe.servings}
-            prepTime={recipe.prep_time}
-            cookTime={recipe.cook_time}
-            calories={recipe.calories}
-            carbs={recipe.carbohydrate_content}
-            protein={recipe.protein_content}
-            fat={recipe.fat_content}
-            saturatedFat={recipe.saturated_fat_content}
-            cholesterol={recipe.cholesterol_content}
-            sodium={recipe.sodium_content}
-            fiber={recipe.fiber_content}
-            sugar={recipe.sugar_content}
-            rating={recipe.average_rating}
+            {...recipe}
           />
           <CalculateCalories calories={recipe.calories}/>
           <IngredientWrapper>
@@ -103,7 +103,11 @@ const RecipeDetail = (props) => {
           </IngredientWrapper>
         </Wrapper>
         <Wrapper jc="center">
-          <RelatedRecipeList />
+            <RelatedRecipeList 
+              ingredientRecommend={recipe.ingredients_recommend}
+              nutritionRecommned={recipe.nutrient_recommend}
+            /> 
+
           <ReviewList recipeId={recipeId}/>
         </Wrapper>
       </Container>

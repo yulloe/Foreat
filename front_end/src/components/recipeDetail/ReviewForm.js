@@ -1,18 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Rating from '@mui/material/Rating';
-
-import profileImg from "assets/img/Ingredient_rosemary.jpg";
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { userInfoState, reviewDataState } from 'atoms/atoms';
+import { getMember } from "api/MyPageApi";
+import { getReviewList } from "api/RecipeDetailApi";
 import { createReview } from "api/ReviewApi";
+import ReviewCard from "components/recipeDetail/ReviewCard";
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
 `
 
 const Form = styled.form`
   display: flex;
-  margin: 1rem 5rem 4rem 5rem;
+  margin: 1rem 5rem 2rem 5rem;
   padding: 2rem;
   width: 58rem;
   height: 11rem;
@@ -58,7 +62,7 @@ const ButtonContainer = styled.div`
     background-color: white;
     padding: 0.5rem 0.9rem;
     margin: 0.7rem 0 0 1rem;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     &:hover {
       border: 1px solid black;
       background-color: black;
@@ -85,15 +89,47 @@ const Button = styled.button`
     background-color: black;
     color: white;
     cursor: pointer;
+  }
+`
+
+  
+const CardContainer = styled.div`
+
 `
 
 
-
 const ReviewForm = ({ recipeId }) => {
+  const UserInfo = useRecoilValue(userInfoState);
+  const [ profileImage, setProfileImage] = useState();
   const [ ratings, setRatings ] = useState();
   const [ content, setContent ] = useState();
   const [ image_url, setImageUrl] = useState();
   const [ fileName, setFileName ] = useState();
+  const [ reviews, setReviews] = useState([]); 
+  const [ reviewData, setReviewData ] = useRecoilState(reviewDataState)
+  
+  console.log(555, reviewData.id)
+
+  useEffect(() => {
+
+    getMember(UserInfo)
+    .then((res) => {
+      console.log(res)
+      setProfileImage(res.profile_image_url)
+     })
+    .catch((err) => 
+      console.log(err)
+      )
+
+    getReviewList(recipeId).then((res) => {
+      setReviews(res.data)
+      console.log("ReviewList", res.data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  },[]);
 
   const onFileUpload = (event) => { 
     // 파일 이미지 크기 제한해야됨?!
@@ -112,28 +148,39 @@ const ReviewForm = ({ recipeId }) => {
 
     for (let key of formData.keys()) { console.log(key, ":", formData.get(key)); }
     const response = await createReview(recipeId, formData)
-    console.log(response)
-    
+    if (response) {
+      const result = await getReviewList(recipeId)
+      setReviews(result.data)
+    }
   }
 
   return (
     <Container>
       <Form enctype="multipart/form-data">
         <ImgWrapper>
-          <Img src={profileImg} alt="" />
+          <Img src={profileImage} alt="" />
         </ImgWrapper>
         <div style={{padding: "0.5rem 0"}}>
           <Rating
             name="simple-controlled"
-            value={ratings}
-            onChange={(event, newRatings) => {
-              setRatings(newRatings);
-            }}
+            value={reviewData.ratings}
+            onChange={(e, newRatings) => 
+              setReviewData((oldData) => [
+                ...oldData, {
+                  ratings: newRatings
+                }
+              ])
+            }
           />
           <InputContent placeholder="WRITE YOUR REVIEW HERE"
-            value={content} 
+            value={reviewData.content}
+            maxLength="1000"
             onChange={
-              (e)=> setContent(e.target.value)
+              (e, newContent)=> setReviewData((oldData) => [
+                ...oldData,{
+                  content: newContent
+                }
+              ])
             }/>
           <ButtonContainer>
           <FileLabel>{ fileName }</FileLabel>
@@ -152,6 +199,16 @@ const ReviewForm = ({ recipeId }) => {
           </ButtonContainer>
         </div>
       </Form>
+      <CardContainer>
+        <div style={{display:"flex", justifyContent:"center", flexWrap:"wrap" }}>
+            { reviews.map((review) => ( 
+              <ReviewCard
+                key={review.id}
+                {...review}
+              />
+            ))}
+          </div>
+      </CardContainer>
     </Container>
   );
 };
