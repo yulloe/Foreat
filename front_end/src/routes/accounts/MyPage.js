@@ -1,10 +1,15 @@
 import { React, useState, useEffect } from "react";
 import styled from "styled-components";
+import { useRecoilValue } from 'recoil';
+import { userInfoState } from '../../atoms/atoms';
 
 import Preferences from "components/accounts/mypage/Preferences"
 import SavedRecipeList from "components/accounts/mypage/SavedRecipeList"
 import Userinfo from "components/accounts/mypage/Userinfo"
 
+
+import { getMember } from "api/MyPageApi";
+import { getMypage } from "api/MyPageApi";
 
 const Container = styled.div`
   margin: 0 10vw;
@@ -48,6 +53,13 @@ const UnderLine = styled.div`
 const MyPage = () => {
   const [savedRecipes, setSavedRecipes] = useState(true);
   const [preferences, setPreferences] = useState(false);
+  const [image, setImage] = useState();
+  const [email, setEmail] = useState();
+  const [nickname, setNickname] = useState();
+  const [RecipeList, setRecipeList] = useState([]);
+  const [ReviewList, setReviewList] = useState([]);
+  
+  const UserInfo = useRecoilValue(userInfoState);
 
   const showSavedRecipes = async() => {
     setSavedRecipes(true);
@@ -58,14 +70,39 @@ const MyPage = () => {
     setPreferences(true);
   };
 
+  
+
   useEffect(() => {
     showSavedRecipes();
+
+    getMypage(UserInfo)
+    .then((res) => {
+      console.log(res)
+      setRecipeList(res.liked_recipe)
+      setReviewList(res.review)
+     })
+    .catch((err) => 
+      console.log(err)
+      )
+
+      getMember(UserInfo)
+      .then((res) => 
+        {
+        console.log(res)
+        setEmail(res.email.split('_')[1]) // 구글 기준으로 맞춤, 카카오로 했을 때는 달라질 수 있음
+        setNickname(res.nickname)
+        setImage(res.profile_image_url)
+      })
+      .catch((err) => 
+        console.log(err)
+        )
+  
   },[]);
 
   return (
     <>
       <Container>
-          <Userinfo />
+          <Userinfo image={image} nickname={nickname} email={email} UserInfo={UserInfo} />
         <SpaceBetweenContainer>
           <BoxContainer>
             <RowContainer>
@@ -81,7 +118,7 @@ const MyPage = () => {
         
         <SpaceBetweenContainer>
           <div>
-            {savedRecipes ? <SavedRecipeList /> : null}
+            {savedRecipes ? <SavedRecipeList RecipeList={RecipeList} ReviewList={ReviewList} /> : null}
             {preferences ? <Preferences /> : null}
           </div>
         </SpaceBetweenContainer>

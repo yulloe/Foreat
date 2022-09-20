@@ -1,27 +1,24 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import styled from "styled-components";
-import PropTypes from "prop-types";
-// import { Link } from 'react-router-dom';
-import Ingredient_egg from "assets/img/Ingredient_egg.jpg";
+import Rating from '@mui/material/Rating';
 
 const Container = styled.div`
   display: flex;
-  flex-flow: wrap;
-  min-width: 32vh;
-  margin: 1rem;;
+  margin: 0.5rem;;
   padding: 0.2rem;
   border: 1px solid #C4C4C4;
 `
 
 const CardItem = styled.div`
-  width: 20rem;
-  height: 25rem;
-
+  width: 19rem;
+  height: 24rem;
 `
 
 const ImgWrapper = styled.div`
-  width: 20rem;
-  height: 20rem;
+  width: 19rem;
+  height: 19rem;
   overflow: hidden; 
   background-position: center;
 `
@@ -52,11 +49,11 @@ const TextContainer = styled.div`
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
   }
-  .category {
+  .keywords {
     font-size: 0.87rem;
     font-weight: 500;
   }
-  .calorie {
+  .calories {
     font-size: 0.87rem;
     font-weight: 300;
   }
@@ -71,44 +68,38 @@ const BorderLine = styled.div`
 const SpaceBetweenContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
 `
 
-
-const SearchCard = () => {
-  //{ index, recipeImg, recipeName, recipeCalorie, recipeSeq }
-  const recipeImg = Ingredient_egg
-  const recipeName = "salmon bruschetta"
-  const recipeCalorie = 128
-  const index = 0
+const Card3 = ({ 
+    recipe_seq, name, calories, 
+    images, average_rating
+  
+  }) => {
+  
     return (
       <Container>
-        {/* <Link to={`/recipes/${recipeSeq}`} style={{color: 'black', textDecoration : "none"}}> */}
+        <Link to={`/recipes/${recipe_seq}`} style={{color: 'black', textDecoration : "none"}}>
           <CardItem>
             <ImgWrapper>
-              <Img src={recipeImg} />
+              <Img src={images} />
             </ImgWrapper>
             <TextContainer>
-              <div className='title'>{recipeName}</div>
+              <div className='title'>{name}</div>
               <BorderLine />
               <SpaceBetweenContainer>
-                <div className='category'>CATEGORY</div>
-                <div className='calorie'>{Math.round(recipeCalorie)} Kcal</div>
+                {/* <div className='keywords'>{(keywords ? keywords[0] : "")}</div> */}
+                <div className='calories'>{Math.round(calories)} Kcal</div>
+                <Rating name="read-only" value={average_rating} readOnly  size="small" />
               </SpaceBetweenContainer>
             </TextContainer>
           </CardItem>
-        {/* </Link> */}
+        </Link>
         {/* { (index+1)%4 === 0 ? null : <Line /> } */}
       </Container>
   );
 };
 
 
-SearchCard.propTypes = {
-  index: PropTypes.number.isRequired,
-  recipeImg: PropTypes.string.isRequired,
-  recipeName: PropTypes.string.isRequired,
-  recipeCalorie: PropTypes.number.isRequired,
-};
 
-
-export default SearchCard
+export default Card3
