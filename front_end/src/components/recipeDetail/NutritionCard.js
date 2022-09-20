@@ -5,7 +5,6 @@ const Container = styled.div`
   border: 1px solid #000000;
   display: flex;
   flex-direction: column;
-  algin-items: center;
   padding: 0.5rem;
   .Warning {
     color: red;
@@ -22,7 +21,7 @@ const Container = styled.div`
     width: 5vw;
     height: 0.05rem;
     background: red;
-    margin: auto;
+    margin: auto; 
   }
   .Title {
     font-size: 2vh;

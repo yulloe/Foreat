@@ -9,8 +9,7 @@ import { Alert } from "components/commons/Alert";
 const Container = styled(motion.div)`
   box-sizing: border-box;
   width: 700px;
-  border-radius: 40px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 3px 5px 5px 5px #424141;
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -143,13 +142,13 @@ const DietaryRestrictionsModal = ({
         <div style={{ width: "26rem" }}>
           <SpaceBetweenContainer>
             <Button2
-              bc={cholesterolShow ? on : ""}
+              bs={cholesterolShow ? on : ""}
               onClick={onCholesterol}
               name="Low cholesterol"
               mr="0px"
             />
             <Button2
-              bc={sodiumShow ? on : ""}
+              bs={sodiumShow ? on : ""}
               onClick={onSodium}
               name="Low sodium"
               mr="0px"
@@ -157,14 +156,14 @@ const DietaryRestrictionsModal = ({
           </SpaceBetweenContainer>
           <SpaceBetweenContainer>
             <Button2
-              bc={sugarShow ? on : ""}
+              bs={sugarShow ? on : ""}
               onClick={onsugar}
               name="Low sugar"
               mr="0px"
             />
 
             <Button2
-              bc={interestShow ? on : ""}
+              bs={interestShow ? on : ""}
               onClick={onInterest}
               name="No interest"
               mr="0px"
@@ -174,15 +173,14 @@ const DietaryRestrictionsModal = ({
       </BoxContainer>
 
       <ButtonContainer>
-        <Button name="Check" onClick={onCheck} />
-
-        <Button
+      <Button
           name="Cancel"
           bc="#C4C4C4"
           hoverColor="#a2a2a2"
-          ml="3rem"
           onClick={onClose}
         />
+        <Button name="Check"
+          ml="3rem" onClick={onCheck} />
       </ButtonContainer>
     </Container>
   );

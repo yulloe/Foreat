@@ -23,26 +23,33 @@ const BrowseListItem = ({ keyword, title }) => {
     const response = await getBrowseList(1, keyword);
     setResultList(response);
     setIsLoading(false);
-  };
 
-  useEffect(() => {
-    getBrowseListItem();
-  }, [isLoading]);
+  }
 
-  return (
-    <div>
-      <Title>{title}</Title>
-      <CardContainer>
-        {isLoading ? <CircularProgress /> : null}
-        {resultList.map((result, idx) => {
-          // 5개만 잘라서 보여주기
-          if (idx < 5) {
-            return <Card4 key={idx} {...result} />;
-          }
-        })}
-      </CardContainer>
-    </div>
-  );
-};
+  useEffect (() => {
+    getBrowseListItem()
+  }, [isLoading])
+
+
+    return (
+      <div>
+        <Title>{title}</Title>
+        <CardContainer>
+          {isLoading ? <CircularProgress sx={{ color: '#ED8141', marginTop: '2rem' }} /> : null}
+          { resultList.map((result, idx) => {
+            // 5개만 잘라서 보여주기
+            if ( idx < 5 ) {
+              return (
+              <Card4 key={idx} {...result} 
+              />
+              )
+            }
+          })}
+          
+        </CardContainer>
+      </div>
+    )
+}
+
 
 export default BrowseListItem;

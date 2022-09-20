@@ -140,11 +140,15 @@ const ReviewForm = ({ recipeId }) => {
 
     const response = await createReview(recipeId, formData)
     if (response) {
-      const result = await getReviewList(recipeId)
-      setReviews(result.data)
-      // 리뷰 작성 후 입력 값 초기화
-      setRatings(0)
-      setContent("")
+      if ( response.status === 201 ) {
+        const result = await getReviewList(recipeId)
+        setReviews(result.data)
+        // 리뷰 작성 후 입력 값 초기화
+        setRatings(0)
+        setContent("")
+      } else if ( response.status === 202 ) {
+        Alert("❌ You can review only once.")
+      }
     }
   }
   
@@ -174,7 +178,7 @@ const ReviewForm = ({ recipeId }) => {
     .catch((err) => {
       console.log(err)
     })
-  }, [reviews])
+  }, [])
   
 
   const onClickSave = async (event) => {

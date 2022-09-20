@@ -9,8 +9,7 @@ import { Alert } from "components/commons/Alert";
 const Container = styled(motion.div)`
   box-sizing: border-box;
   width: 700px;
-  border-radius: 40px;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 3px 5px 5px 5px #424141;
   background-color: white;
   display: flex;
   flex-direction: column;
@@ -227,57 +226,50 @@ const AllergiesModal = ({
       <BoxContainer>
         <div style={{ width: "26rem" }}>
           <SpaceBetweenContainer>
+
+            <Button2 bs={wheatShow ? on : ""} mr="0px" onClick={onWheat} name="Wheat" />
             <Button2
-              bc={wheatShow ? on : ""}
-              mr="0px"
-              onClick={onWheat}
-              name="Wheat"
-            />
-            <Button2
-              bc={peanutShow ? on : ""}
-              mr="0px"
+              bs={peanutShow ? on : ""}
+              mr="0px" 
+
               onClick={onPeanut}
               name="Peanut"
             />
           </SpaceBetweenContainer>
           <SpaceBetweenContainer>
             <Button2
-              bc={walnutShow ? on : ""}
-              mr="0px"
+
+              bs={walnutShow ? on : ""}
+              mr="0px" 
               onClick={onWalnut}
               name="walnut"
             />
-            <Button2
-              bc={appleShow ? on : ""}
-              mr="0px"
-              onClick={onApple}
-              name="Apple"
-            />
+            <Button2 bs={appleShow ? on : ""}mr="0px"  onClick={onApple} name="Apple" />
           </SpaceBetweenContainer>
           <SpaceBetweenContainer>
             <Button2
-              bc={sesameShow ? on : ""}
-              mr="0px"
+              bs={sesameShow ? on : ""}
+              mr="0px" 
+
               onClick={onSesame}
               name="Sesame"
             />
             <Button2
-              bc={shellfishShow ? on : ""}
-              mr="0px"
+
+              bs={shellfishShow ? on : ""}
+              mr="0px" 
+
               onClick={onShellfish}
               name="Shellfish"
             />
           </SpaceBetweenContainer>
           <SpaceBetweenContainer>
+
+            <Button2 bs={eggShow ? on : ""} mr="0px" onClick={onEgg} name="Egg" />
             <Button2
-              bc={eggShow ? on : ""}
-              mr="0px"
-              onClick={onEgg}
-              name="Egg"
-            />
-            <Button2
-              bc={interestShow ? on : ""}
-              mr="0px"
+              bs={interestShow ? on : ""}
+              mr="0px" 
+
               onClick={onInterest}
               name="No relevant"
             />
@@ -286,15 +278,14 @@ const AllergiesModal = ({
       </BoxContainer>
 
       <ButtonContainer>
-        <Button name="Check" onClick={onCheck} />
-
-        <Button
+      <Button
           name="Cancel"
           bc="#C4C4C4"
           hoverColor="#a2a2a2"
-          ml="3rem"
           onClick={onClose}
         />
+        <Button name="Check"
+          ml="3rem" onClick={onCheck} />
       </ButtonContainer>
     </Container>
   );

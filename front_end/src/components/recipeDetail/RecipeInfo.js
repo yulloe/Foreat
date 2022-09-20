@@ -60,6 +60,7 @@ const TextContainer = styled.div`
   margin: 1rem 0;
   .itemTitle{
     font-weight: 600;
+    margin: 0.4rem 0;
   }
   .nutriTitle{
     grid-template-rows: 0 0;
@@ -71,6 +72,11 @@ const TextContainer = styled.div`
   .item{
     align-self: center;
   }
+  .itemWarn {
+    align-self: center;
+    color: #ED8141;
+    font-weight: 500;
+  }
 `
 
 const CardContainer = styled.div`
@@ -81,7 +87,7 @@ const CardContainer = styled.div`
 `
 
 const RecipeInfo = ({ 
-  recipe_seq, name, categories, servings, serving_size, liked,
+  recipe_seq, name, categories, servings, serving_size, liked, allergy,
   prep_time, cook_time, calories, carbohydrate_content, protein_content, fat_content, 
   saturated_fat_content, cholesterol_content, sodium_content, fiber_content, sugar_content, average_rating }) => {
   
@@ -96,11 +102,11 @@ const RecipeInfo = ({
 
   useEffect(() => {
     setLike(liked);
-  }, [liked])
+  }, [recipe_seq])
 
-  useEffect(() => {
-    setLike(like)
-  }, [like])
+  // useEffect(() => {
+  //   setLike(like)
+  // }, [like])
 
 
   return (
@@ -122,6 +128,12 @@ const RecipeInfo = ({
       </SpaceBetweenContainer>
       <hr />
         <TextContainer>
+          <div className="itemTitle">ALLERGIES</div>
+          <div className="itemWarn">
+            { allergy ? allergy.length > 0 ?
+              allergy.map((item) => (`${item.allergy_name} `)) : "NOT RELEVANT" : "NOT RELEVANT"
+            }
+          </div>
           <div className="itemTitle">SERVINGS</div>
           <div className="item">{servings}</div>
           <div className="itemTitle">PREPATION TIME</div>

@@ -13,8 +13,8 @@ from functools import reduce
 
 from recipes.serializers import RecipeSerializer, RecipeListSerializer, ReviewListSerializer, ReviewSerializer, IngredientChoiceListSerializer
 from recipes.storages import FileUpload, s3_client
-from members.models import Member, LikedRecipe, Recommend, Survey
-from recipes.models import Keyword, Recipe, Category, RecipeKeyword, Review
+from members.models import Member, LikedRecipe, Recommend, Survey, MemberAllergy
+from recipes.models import Allergy, Keyword, Recipe, Category, RecipeKeyword, Review
 from members.utils import login_decorator
 import json
 import re
@@ -91,6 +91,7 @@ class RecipeDetail(APIView):
         response_data = serializer.data
         response_data.update(recipe.review_set.all().aggregate(average_rating=Avg('ratings')))
 
+
         try:
             response_data['ingredient_raw'] = json.loads(serializer.data['ingredient_raw'])
         except:
@@ -100,7 +101,13 @@ class RecipeDetail(APIView):
                 if i == len(temp)-1:
                     temp[i] =temp[i][:-2]
             response_data['ingredient_raw'] = temp
-                
+        try:         
+            temp = MemberAllergy.objects.filter(member_seq=Survey.objects.get(member_seq=request.member)).values('allergy_seq')
+            is_allergy = Recipe.objects.filter(recipe_seq=pk, allergies__in=temp).values('allergies')
+            is_allergy = list(Allergy.objects.filter(allergy_seq__in=is_allergy).values('allergy_name'))
+            response_data['allergy'] = is_allergy
+        except:
+            pass
 
         response_data['instructions'] = json.loads(serializer.data['instructions'])
         response_data['images'] = json.loads(response_data['images'])[0]
@@ -261,7 +268,7 @@ class Search(APIView, LimitOffsetPagination):
                 Q(ingredient_raw__icontains=q_word)
             )
             try:
-                q_seq = Keyword.objects.get(keyword_name=q_word)
+                q_seq = Keyword.objects.filter(keyword_name=q_word).values('keyword_seq')
                 if q_seq:
                     if object_list:
                         object_list.union(Recipe.objects.filter(keywords__in=RecipeKeyword.objects.filter(keyword_seq=q_seq).values('keyword_seq')))
@@ -346,44 +353,41 @@ class BrowseRecipeList(ListAPIView, LimitOffsetPagination):
 class RecommendRecipeList(ListAPIView, LimitOffsetPagination):
     @login_decorator
     def get(self, request, format=None):
-
         word = self.request.GET['type']
 
         is_survey = Survey.objects.filter(member_seq=request.member)
-        # is_survey = Survey.objects.filter(member_seq=member)
         is_review = Review.objects.filter(member=request.member)
-        # is_review = Review.objects.filter(member=member)
 
         if word == 'foryou':
 
             recommends = Recommend.objects.filter(member_seq=request.member).values('content_base')
-            # recommends = Recommend.objects.filter(member_seq=member).values('content_base')
 
             if recommends[0]['content_base']:
                 recommend_list = json.loads(recommends[0]['content_base'])
-                recipes = Recipe.objects.filter(recipe_seq__in=recommend_list)
+                recipes = Recipe.objects.filter(Q(recipe_seq__in=recommend_list), ~Q(recipe_seq__in=Review.objects.filter(member=request.member).values('recipe')))
                 recipes = list(recipes)
-                recipes = sorted(recipes, key=lambda x: recommend_list.index(x.recipe_seq))[::-1]
+                recipes = sorted(recipes, key=lambda x: recommend_list.index(x.recipe_seq))
 
             else:
                 if is_survey and not is_review:
 
                     temp = Survey.objects.filter(member_seq=request.member).values()
-                    # temp = Survey.objects.filter(member_seq=member).values()
 
                     print(temp[0]['ingredient_keywords'])
                     ingredient_keywords = temp[0]['ingredient_keywords'][1:-1].replace("'", '').split(', ')
                     print(ingredient_keywords)
                     recipes = Recipe.objects.filter(reduce(operator.or_, (
-                        Q(ingredient_raw__icontains=x) for x in ingredient_keywords)))\
+                        Q(ingredient_raw__icontains=x) for x in ingredient_keywords)), ~Q(recipe_seq__in=Review.objects.filter(member=request.member).values('recipe')))\
                         .annotate(average_rating=Avg('review__ratings'), review_cnt=Count('review'))\
                         .order_by('-average_rating', '-review_cnt')[:75]
                     print(recipes)
 
                 else:
-                    recipes = Recipe.objects.annotate(
-                        average_rating=Avg('review__ratings'), review_cnt=Count('review')).order_by('-average_rating', '-review_cnt')[:75]
-            
+                    recipes = Recipe.objects\
+                        .filter(~Q(recipe_seq__in=Review.objects.filter(member=request.member).values('recipe')))\
+                        .annotate(average_rating=Avg('review__ratings'), review_cnt=Count('review'))\
+                        .order_by('-average_rating', '-review_cnt')[:75]
+            recipes = recipes
             results = self.paginate_queryset(recipes)
             serializer = RecipeListSerializer(results, many = True)
 
@@ -395,22 +399,22 @@ class RecommendRecipeList(ListAPIView, LimitOffsetPagination):
         elif word == 'likeyou':
 
             recommends = Recommend.objects.filter(member_seq=request.member).values('collaborate_base', 'survey_base')
-            # recommends = Recommend.objects.filter(member_seq=member).values('collaborate_base', 'survey_base')
             
             if recommends[0]['collaborate_base']:
                 recommend_list = json.loads(recommends[0]['collaborate_base'])
-                recipes = Recipe.objects.filter(recipe_seq__in=recommend_list)
+                recipes = Recipe.objects.filter(Q(recipe_seq__in=recommend_list), ~Q(recipe_seq__in=Review.objects.filter(member=request.member).values('recipe')))
                 recipes = list(recipes)
-                recipes = sorted(recipes, key=lambda x: recommend_list.index(x.recipe_seq))[::-1]
+                recipes = sorted(recipes, key=lambda x: recommend_list.index(x.recipe_seq))
             
             elif recommends[0]['survey_base']:
                 recommend_list = json.loads(recommends[0]['survey_base'])
-                recipes = Recipe.objects.filter(recipe_seq__in=recommend_list)
+                recipes = Recipe.objects.filter(Q(recipe_seq__in=recommend_list), ~Q(recipe_seq__in=Review.objects.filter(member=request.member).values('recipe')))
                 recipes = list(recipes)
-                recipes = sorted(recipes, key=lambda x: recommend_list.index(x.recipe_seq))[::-1]
+                recipes = sorted(recipes, key=lambda x: recommend_list.index(x.recipe_seq))
 
             else:
                 recipes = Recipe.objects.prefetch_related('review_set')\
+                    .filter(~Q(recipe_seq__in=Review.objects.filter(member=request.member).values('recipe')))\
                     .annotate(average_rating=Avg('review__ratings'), review_cnt=Count('review'))\
                     .order_by('-review_cnt', '-average_rating')[:75]
             results = self.paginate_queryset(recipes)
@@ -425,11 +429,17 @@ class RecommendRecipeList(ListAPIView, LimitOffsetPagination):
         response_data.update({'data':serializer.data})
 
         if is_survey and is_review:
-            member_type = 3
+            if len(is_review) >=5:
+                member_type = 5
+            else:
+                member_type = 4
         elif is_survey:
-            member_type = 2
+            member_type = 3
         elif is_review:
-            member_type = 1
+            if len(is_review) >=5:
+                member_type = 2
+            else:
+                member_type = 1
         else:
             member_type = 0
 

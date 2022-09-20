@@ -17,6 +17,8 @@ const Container = styled.div`
   grid-template-columns: 1fr;
 `
 
+
+
 const Wrapper = styled.div`
   display: flex;
   justify-content:${(props) => (props.jc ? props.jc : "center")};
@@ -40,6 +42,7 @@ const Img = styled.img`
 const IngredientWrapper = styled.div`
   display: flex;
   justify-content: center;
+  padding: 0 10rem
 `
 
 const RecipeDetail = (props) => {
@@ -60,7 +63,7 @@ const RecipeDetail = (props) => {
 
 	return (
     <div>
-      <Container>
+      <Container sx={{ pt: "5rem", pb: "5rem"}}>
         <Wrapper>
           <div style={{display: "flex", flexDirection: "column", maxWidth:"35%"}}>
           <ImgWrapper>
@@ -77,12 +80,13 @@ const RecipeDetail = (props) => {
             <Ingredients ingredients={recipe.ingredient_raw} />
             <Instructions instructions={recipe.instructions}/>
           </IngredientWrapper>
-        </Wrapper>
-        <Wrapper jc="center">
+          </Wrapper>
+          <Wrapper jc="center">
             <RelatedRecipeList 
               ingredients_recommend={recipe.ingredients_recommend}
               nutrient_recommend={recipe.nutrient_recommend}
-            />
+            /> 
+
           <ReviewList recipeId={recipeId}/>
         </Wrapper>
       </Container>
