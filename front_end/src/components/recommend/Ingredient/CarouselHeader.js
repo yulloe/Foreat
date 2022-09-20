@@ -3,14 +3,12 @@ import Carousel from 'react-material-ui-carousel'
 import styled from "styled-components";
 import { Paper, Button } from '@mui/material'
 import MainImg from "assets/img/IngredientMain.jpg";
-import Carousel1 from "assets/img/Carousel1.png";
 import Carousel3 from "assets/img/Carousel3.jpg";
 import Carousel4 from "assets/img/Carousel4.jpg";
 import Carousel5 from "assets/img/Carousel5.jpg";
 import Carousel6 from "assets/img/Carousel6.jpg";
 import Carousel7 from "assets/img/Carousel7.jpg";
 import Carousel8 from "assets/img/Carousel8.jpg";
-import { borderRadius } from '@mui/system';
 
 const Header = styled.div`
   height: 20rem;
@@ -36,7 +34,8 @@ const HeaderContent = styled.div`
   top: 11rem;
   left:50%;
   transform: translate(-50%, -50%);                                                                   
-  font-size: 1rem;
+  font-size: 1.3rem;
+  font-weight: 400;
   color: white;
   z-index: 2;
   text-align: center;
@@ -47,52 +46,40 @@ const CarouselHeader = () => {
   {
     var items = [
       {
-        name: "Low-Fat Berry Blue Frozen Dessert",
-        description: "Probably the most random thing you have ever seen!",
-        image: MainImg,
-        recipe_seq: 1,
-      },
-      {
-        name: "Blueberry Scones",
-        description: "Hello World!",
-        image: Carousel1,
-        recipe_seq: 20
-      },
-      {
-        name: "Blueberry Scones",
-        description: "Hello World!",
+        name: "Fresh Strawberry Cake",
+        description: "Decorative, Fresh, Delicious",
         image: Carousel3,
-        recipe_seq: 20
+        recipe_seq: 4942
       },
       {
-        name: "Blueberry Scones",
-        description: "Hello World!",
+        name: "Egg Curry",
+        description: "#Beginner_Cook #Indian",
         image: Carousel4,
-        recipe_seq: 20
+        recipe_seq: 5945
       },
       {
-        name: "Blueberry Scones",
-        description: "Hello World!",
+        name: "The Best Pork Chop Dinner",
+        description: "Combine soup, mushrooms, mustard, chicken broth",
         image: Carousel5,
-        recipe_seq: 20
+        recipe_seq: 1620
       },
       {
-        name: "Blueberry Scones",
-        description: "Hello World!",
+        name: "Quick Cinnamon Rolls",
+        description: "No Yeast",
         image: Carousel6,
-        recipe_seq: 20
+        recipe_seq: 44550
       },
       {
-        name: "Blueberry Scones",
-        description: "Hello World!",
+        name: "Judy's Grilled Flank Steak",
+        description: "# High Protein #Steak #Grill #Oven",
         image: Carousel7,
-        recipe_seq: 20
+        recipe_seq: 7266
       },
       {
-        name: "Blueberry Scones",
-        description: "Hello World!",
+        name: "Cajun Lobster Pasta",
+        description: "For Special Anniversary",
         image: Carousel8,
-        recipe_seq: 20
+        recipe_seq: 63070
       }
     ]
     return (

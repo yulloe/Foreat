@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Rating from '@mui/material/Rating';
 
@@ -55,15 +55,16 @@ display: flex;
 const TextContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr;
-  row-gap: 1rem;
   margin: 1rem 0;
   .itemTitle{
     font-weight: 600;
   }
   .nutriTitle{
     grid-template-rows: 0 0;
+    grid-row: 1 / span 3;
     font-size: 1.5rem;
     font-weight: 600;
+    vertical-align: center;
   }
   .item{
     align-self: center;
@@ -77,9 +78,27 @@ const CardContainer = styled.div`
 `
 
 const RecipeInfo = ({ 
-  recipe_seq, name, like, toggleLike, categories, servings, 
+  recipe_seq, name, categories, servings, serving_size, liked,
   prep_time, cook_time, calories, carbohydrate_content, protein_content, fat_content, 
   saturated_fat_content, cholesterol_content, sodium_content, fiber_content, sugar_content, average_rating }) => {
+  
+  const [ like, setLike ] = useState() 
+
+  const toggleLike = async () =>{
+    const response = await likeRecipe(recipe_seq)
+    if (response) {
+      setLike(!like)
+    }
+  }
+
+  useEffect(() => {
+    setLike(liked);
+  }, [liked])
+
+  useEffect(() => {
+    setLike(like)
+  }, [like])
+
 
   return (
     <Container>
@@ -89,13 +108,14 @@ const RecipeInfo = ({
         ta="start" dp="flex"
         mb="1rem"
         >{name}</Typography>
-        <Like src={like ? icon_filled_heart : icon_lined_heart} onClick={toggleLike} alt="" />
+        <Like src={ like ? icon_filled_heart : icon_lined_heart } 
+        onClick={toggleLike} alt="" />
       </SpaceBetweenContainer>
       <SpaceBetweenContainer>
         <CategoryTag>
           <div id="flag">{(categories.length === 0 ? "DELICIOUS" : categories[0]["category_name"] )}</div>
         </CategoryTag>
-        <Rating name="read-only" value={average_rating} readOnly />
+        <Rating name="read-only" value={average_rating ? average_rating : null} readOnly />
       </SpaceBetweenContainer>
       <hr />
         <TextContainer>
@@ -110,6 +130,7 @@ const RecipeInfo = ({
         <TextContainer>
           <div className="nutriTitle">NUTRITION</div>
           <div className="item">Of Adult's Reference Intake</div>
+          <div className="item">Serving Size : {serving_size}</div>
         </TextContainer>
         <div style={{display: "grid", gridTemplateColumns:"2fr 8fr", gap: "0.5vw" }}>
           <CalorieCard title="CALORIES" grams={Math.ceil(calories)} ratio={Math.ceil(calories/667*100)} />
@@ -118,7 +139,7 @@ const RecipeInfo = ({
             <NutritionCard title="PROTEIN" grams={Math.ceil(protein_content)} ratio={Math.ceil(protein_content/35*100)} />
             <NutritionCard title="FAT" grams={Math.ceil(fat_content)} ratio={Math.ceil(fat_content/18.5*100)} />
             <NutritionCard title="SATURATED FAT" grams={Math.ceil(saturated_fat_content)} ratio={Math.ceil(saturated_fat_content/5*100)} />
-            <NutritionCard title="SODIUM" grams={Math.ceil(sodium_content)} ratio={Math.ceil(sodium_content/667*100)} />
+            <NutritionCard title="SODIUM" grams={Math.ceil(sodium_content)} ratio={Math.ceil(sodium_content/833*100)} />
             <NutritionCard title="SUGAR" grams={Math.ceil(sugar_content)} ratio={Math.ceil(sugar_content/16.7*100)} />
             <NutritionCard title="FIBER" grams={Math.ceil(fiber_content)} ratio={Math.ceil(fiber_content/8.3*100)} />
             <NutritionCard title="CHOLESTEROL" grams={Math.ceil(cholesterol_content)} ratio={Math.ceil(cholesterol_content/100*100)} />

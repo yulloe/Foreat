@@ -10,8 +10,8 @@ const KeywordContainer = styled.div`
 
 const Keyword = styled.div`
   display: inline-flex;
-  margin: 0 1rem 0.7rem 0;
-  padding: 0.5rem 1rem;
+  margin: 0 0.6rem 0.6rem 0;
+  padding: 0.4rem 0.8rem;
   font-size: 1rem;
   border: 1px solid #ED8141;
   border-radius: 5rem;
@@ -26,14 +26,14 @@ const KeywordList = ({ keywords }) => {
 
   return (
     <KeywordContainer>
-      { keywords ? keywords.map((keyword) => (
+      { keywords ? keywords.map((keyword, idx) => (
           <Keyword 
           // 클릭시 검색 페이지로 이동 (SearchInput.js 참고하기)
           // function으로 뺐더니 e.target.value 못 잡아서 안에 넣음
+            key={idx}
             onClick={
               async (e) => {
                 const response = await getSearchList(1, keyword.keyword_name)
-                console.log(response)
                 if (response) {
                   navigate('/recipes/search', { state: [keyword.keyword_name, response] })
                 }

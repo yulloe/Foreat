@@ -1,30 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRecoilValue } from 'recoil';
+import { userInfoState } from 'atoms/atoms';
+import { getSurvey } from "api/MyPageApi";
 
-import DietsModal from "../modal/DietsModal";
+import InfosModal from "../modal/InfosModal";
 import AllergiesModal from "../modal/AllergiesModal";
-import DislikedIngredientsModal from "../modal/DislikedIngredientsModal";
-import FavoriteCuisinesModal from "../modal/FavoriteCuisinesModal";
+import DietaryRestrictionsModal from "../modal/DietaryRestrictionsModal";
 import GoalsModal from "../modal/GoalsModal";
 
-import Diets from "../preferences/Diets";
+import Infos from "../preferences/Infos";
 import Allergies from "../preferences/Allergies";
-import DislikedIngredients from "../preferences/DislikedIngredients";
-import FavoriteCuisines from "../preferences/FavoriteCuisines";
+import DietaryRestrictions from "../preferences/DietaryRestrictions";
 import Goals from "../preferences/Goals";
-
-// import { getSurvey } from "api/MyPageApi";
-// import { editSurvey } from "api/MyPageApi";
-
 
 const Container = styled.div`
 `
 
 const Title = styled.div`
   font-family: Playfair Display;
-  font-size: 64px;
+  font-size: 32px;
+  font-weight: 600;
   margin-top: 3rem;
 `
 
@@ -46,6 +44,25 @@ const Overlay = styled(motion.div)`
   z-index: 10;
 `;
 
+const Sub = styled.div`
+  font-size: 32px;
+  font-weight: 500;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+`
+
+const Nothing = styled.div`
+margin-top: 3rem;
+  margin-bottom: 3rem;
+
+`
+
+const Nothing_a = styled.a`
+  margin-top: 3rem;
+  text-decoration: none;
+  color: #ed8141;
+`
+
 const overlay = {
   hidden: { backgroundColor: "rgba(0, 0, 0, 0)" },
   visible: { backgroundColor: "rgba(0, 0, 0, 0.5)" },
@@ -53,30 +70,36 @@ const overlay = {
 };
 
 
-const Preferences = () => {
+const Preferences = ({SurveyList}) => {
   const [widgetId, setWidgetId] = useState();
+  const [flag, setFlag] = useState();
+  const [surveyList, setSurveyList] = useState(SurveyList);
+  
+  const UserInfo = useRecoilValue(userInfoState);
 
+  useEffect(() => {
+    getSurvey(UserInfo).then((res) => {setSurveyList(res)})
+    setFlag(false)
+  },[flag])
 
-  const widgets = ["M01", "M02", "M03", "M04", "M05"];
+  const on = "#a2a2a2"
+
+  const widgets = ["M01", "M02", "M03", "M04"];
 
   const wid = {
-    M01: <Diets  setWidgetId={setWidgetId} />,
-    M02: <Allergies setWidgetId={setWidgetId} />,
-    M03: (
-      <DislikedIngredients setWidgetId={setWidgetId}/>
+    M01: <Infos key={widgets[0]} surveyList={surveyList} setWidgetId={setWidgetId} />,
+    M02: (
+      <DietaryRestrictions key={widgets[1]} surveyList={surveyList} setWidgetId={setWidgetId}/>
     ),
-    M04: (
-      <FavoriteCuisines setWidgetId={setWidgetId} />
-    ),
-    M05: <Goals setWidgetId={setWidgetId} />,
+    M03: <Allergies key={widgets[2]} surveyList={surveyList} setWidgetId={setWidgetId} />,
+    M04: <Goals key={widgets[3]} surveyList={surveyList} setWidgetId={setWidgetId} />,
   };
 
   const mod = {
-    M01: <DietsModal layoutId={widgetId} setWidgetId={setWidgetId} />,
-    M02: <AllergiesModal layoutId={widgetId} setWidgetId={setWidgetId} />,
-    M03: <DislikedIngredientsModal layoutId={widgetId} setWidgetId={setWidgetId} />,
-    M04: <FavoriteCuisinesModal layoutId={widgetId} setWidgetId={setWidgetId} />,
-    M05: <GoalsModal layoutId={widgetId} setWidgetId={setWidgetId} />,
+    M01: <InfosModal flag={flag} setFlag={setFlag} surveyList={surveyList} on={on} UserInfo={UserInfo} layoutId={widgetId} setWidgetId={setWidgetId} />,
+    M02: <DietaryRestrictionsModal flag={flag} setFlag={setFlag} surveyList={surveyList} on={on} UserInfo={UserInfo} layoutId={widgetId} setWidgetId={setWidgetId} />,
+    M03: <AllergiesModal flag={flag} setFlag={setFlag} surveyList={surveyList} on={on} UserInfo={UserInfo} layoutId={widgetId} setWidgetId={setWidgetId} />,
+    M04: <GoalsModal flag={flag} setFlag={setFlag} surveyList={surveyList} on={on} UserInfo={UserInfo} layoutId={widgetId} setWidgetId={setWidgetId} />,
   };
 
   return (
@@ -84,6 +107,7 @@ const Preferences = () => {
       <Container>
         <Title>My Preferences</Title>
 
+      {SurveyList?
         <SurveyContainer>
           <Container>
             {widgets.map((widget) => wid[widget])}
@@ -103,6 +127,12 @@ const Preferences = () => {
       </AnimatePresence>
            
         </SurveyContainer>
+        :<Sub> 
+        <Nothing>It is only available if you fill out a survey.</Nothing>
+        <Nothing>Please fill out a survey.</Nothing>
+        <Nothing_a href="/survey">Go to fill out a survey.</Nothing_a>
+        </Sub>
+        }
       </Container>
     </>
   );

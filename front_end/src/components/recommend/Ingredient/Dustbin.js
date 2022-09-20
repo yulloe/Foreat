@@ -27,7 +27,7 @@ const Container = styled.div`
 const DustbinContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 10rem;
+  margin-top: 5rem;
 `
 
 
@@ -37,13 +37,18 @@ const BowlContainer = styled.div`
 `
 
 const MixButton = styled.button`
-  font-size: 1rem;
+  font-size: 1.3rem;
+  font-family: playfair Display;
   margin: 2.5rem 0 0 0.5rem;
   width: 8rem;
   background-color: white;
   cursor: pointer;
   border: none;
-
+  &:hover {
+    transform:scale(1.1);
+    -webkit-transform:scale(1.1);
+    -moz-transform:scale(1.1);
+  }
 `
 
 const firstBall = keyframes`
@@ -100,8 +105,9 @@ const Foodimg3 = styled.img`
 const FoodContainer = styled.div`
   display: flex-wrap;
   margin: 2rem 0 2rem 0;
-  padding: 0 9rem;
+  /* padding: 0 5rem; */
   min-height: 10vh;
+  width: 55rem;
 `
 
 const FoodButton = styled.button`
@@ -132,7 +138,6 @@ const Dustbin = React.memo(function Dustbin() {
         accept: ItemTypes.BOX,
         drop: (accept) => {
             setFood(foods => [...foods, accept])
-            console.log(foods.length)
         },
         collect: (monitor) => ({
             isOver: monitor.isOver(),
@@ -177,7 +182,7 @@ const Dustbin = React.memo(function Dustbin() {
         <Container>
           <DustbinContainer>
             <div ref={drop} role={'Dustbin'} style={{ ...style, backgroundColor }}>
-              <div>{isActive ? 'Release to drop' : 'Drag a ingredient here!'}</div>
+              <div style={{fontSize: "1.1rem"}}>{isActive ? 'Release to drop' : 'Drag a ingredient here!'}</div>
               {foodsUnique.map((food, index) => (
                 (index <= 8 ? 
                   <Foodimg1 key={index} src={food.src} alt={food.title} /> : ( index <= 17 ?

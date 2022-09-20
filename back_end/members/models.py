@@ -10,8 +10,6 @@ from foreat import settings
 # Create your models here.
 class MemberManager(BaseUserManager):
     def create_user(self, nickname, email=None, password=None, profile_image_url=None, kakao_id=None, google_id=None):
-        # if not email:
-        #     raise ValueError('Users must have an email address')
 
         user = self.model(
             nickname = nickname,
@@ -74,15 +72,16 @@ class Member(AbstractBaseUser):
 
 
 class LikedRecipe(models.Model):
-    member_seq = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    recipe_seq = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-
+    member_seq = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column="member_seq")
+    recipe_seq = models.ForeignKey(Recipe, on_delete=models.CASCADE, db_column="recipe_seq")
+    create_date = models.DateTimeField(auto_now_add=True, null=True)
+    
     class Meta:
         db_table = 'tb_liked_recipe'
 
 
 class Survey(models.Model):
-    member_seq = models.OneToOneField(Member, on_delete=models.CASCADE, primary_key=True)
+    member_seq = models.OneToOneField(Member, on_delete=models.CASCADE, primary_key=True, db_column="member_seq" )
     age = models.IntegerField(null=True, blank=True)
     gender = models.BooleanField(null=True, blank=True) # True: male, False=female
 
@@ -94,7 +93,7 @@ class Survey(models.Model):
     # 식이제한 - True, False
     cholesterol = models.BooleanField(null=True, blank=True)
     sodium = models.BooleanField(null=True, blank=True)
-    suger = models.BooleanField(null=True, blank=True)
+    sugar = models.BooleanField(null=True, blank=True)
     
     # goal
     beginner = models.BooleanField(null=True, blank=True)
@@ -112,9 +111,10 @@ class Survey(models.Model):
 
     class Meta:
         db_table = 'tb_survey'
+        
 
 class Recommend(models.Model):
-    member_seq = models.OneToOneField(Member, on_delete=models.CASCADE, primary_key=True)
+    member_seq = models.OneToOneField(Member, on_delete=models.CASCADE, primary_key=True, db_column="member_seq")
     content_base = models.TextField(null=True, blank=True)
     collaborate_base = models.TextField(null=True, blank=True)
     survey_base = models.TextField(null=True, blank=True)
@@ -122,16 +122,17 @@ class Recommend(models.Model):
     class Meta:
         db_table = 'tb_recommend'
 
+
 class LikedIngredient(models.Model):
-    member_seq = models.ForeignKey(Survey, on_delete=models.CASCADE)
-    ingredient_seq = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    member_seq = models.ForeignKey(Survey, on_delete=models.CASCADE, db_column="member_seq")
+    ingredient_seq = models.ForeignKey(Ingredient, on_delete=models.CASCADE,db_column="ingredient_seq")
 
     class Meta:
         db_table = 'tb_member_liked_ingredient'
 
 class MemberAllergy(models.Model):
-    member_seq = models.ForeignKey(Survey, on_delete=models.CASCADE)
-    allergy_seq = models.ForeignKey(Allergy, on_delete=models.CASCADE)
+    member_seq = models.ForeignKey(Survey, on_delete=models.CASCADE, db_column="member_seq")
+    allergy_seq = models.ForeignKey(Allergy, on_delete=models.CASCADE, db_column="allergy_seq")
 
     class Meta:
         db_table = 'tb_member_allergy'

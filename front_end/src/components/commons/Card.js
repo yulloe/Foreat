@@ -7,15 +7,14 @@ import heart from "assets/img/icon_filled_heart.png"
 
 const Container = styled.div`
   display: flex;
-  flex-flow: wrap;
-  margin: 1rem 0 1rem 0;
+  margin: 1rem;
   padding: 0.2rem;
   border: 1px solid #C4C4C4;
 `
 
 const CardItem = styled.div`
-  width: 20rem;
-  height: 26rem;
+  width: 19rem;
+  height: 24rem;
   position: relative;
   opacity: 1;
   display: block;
@@ -96,8 +95,8 @@ const TextContent = styled.div`
   }
 `
 
-const Card = ({ recipeImg, recipeName, recipeCalorie, recipeSeq, recipeKeywords, recipeRating}) => {
-  const likeCnt = 39
+const Card = ({ recipeImg, recipeName, recipeCalorie, recipeSeq, recipeKeywords, recipeRating, likedCount}) => {
+
   return (
 
       <Container>
@@ -117,7 +116,7 @@ const Card = ({ recipeImg, recipeName, recipeCalorie, recipeSeq, recipeKeywords,
             <HoverText className="middle">
               <TextContent className="text">
                 <img src={heart} alt=""/>
-                <div>{likeCnt} PEOPLE</div>
+                <div>{likedCount} PEOPLE</div>
                 <div>LIKED THIS RECIPE</div>
               </TextContent>
             </HoverText>
@@ -135,6 +134,7 @@ Card.propTypes = {
   recipeCalorie: PropTypes.number.isRequired,
   recipeSeq: PropTypes.number.isRequired,
   recipeKeywords: PropTypes.array.isRequired,
+  likedCount: PropTypes.number.isRequired
 };
 
 

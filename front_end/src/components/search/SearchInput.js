@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import {React, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components";
 
 import { getSearchList } from "api/SearchApi";
@@ -14,7 +14,7 @@ const SearchContainer = styled.form`
 `
 const Input = styled.input`
   display: inline-flex;
-  width: 17rem;
+  width: 15rem;
   height: 1.5rem;
   font-size: 0.7rem;
   margin: 0;
@@ -34,8 +34,7 @@ const ReadingGlassesImg = styled.img`
   height: 1.5rem;
 `
 
-const SearchInput = () => {
-
+const SearchInput = ({ onClick, url, isSelected }) => {
   const [ word, setWord ] = useState(null);  // api
   const navigate = useNavigate();
 
@@ -46,7 +45,6 @@ const SearchInput = () => {
 
 
   const onClickSearch = async (e) => {
-    e.preventDefault()
     const response = await getSearchList(1, word)
     if (response) {
       // 검색 결과 페이지로 이동. 데이터랑 같이 보내줌.
@@ -54,7 +52,11 @@ const SearchInput = () => {
       setWord("")
     }
   }
-
+  const onKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onClickSearch();
+    }
+  }
   return (
     <SearchContainer>
       <Input 
@@ -62,8 +64,9 @@ const SearchInput = () => {
         value={word || ''}
         type="text"
         onChange={onChange}
-        onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+        onKeyPress={onKeyPress}
       />
+      <input type="text" style={{ display: "none"}} />
       <SearchImgWrapper>
         <ReadingGlassesImg 
           src={reading_glasses} 
@@ -72,7 +75,10 @@ const SearchInput = () => {
           onClick={onClickSearch}
         />
       </SearchImgWrapper>
-      <Profile />
+      <Profile
+      url = {url}
+      onClick={onClick}
+      isSelected={isSelected} />
     </SearchContainer>
     );
   };

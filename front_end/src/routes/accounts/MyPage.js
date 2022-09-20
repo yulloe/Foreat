@@ -6,14 +6,11 @@ import { userInfoState } from 'atoms/atoms';
 import Preferences from "components/accounts/mypage/Preferences"
 import SavedRecipeList from "components/accounts/mypage/SavedRecipeList"
 import Userinfo from "components/accounts/mypage/Userinfo"
-
-
+import Report from "components/accounts/mypage/report/Report"
+import { Container } from "@mui/material";
 import { getMember } from "api/MyPageApi";
 import { getMypage } from "api/MyPageApi";
 
-const Container = styled.div`
-  margin: 0 10vw;
-`
 
 const SpaceBetweenContainer = styled.div`
   display: flex;
@@ -53,49 +50,57 @@ const UnderLine = styled.div`
 const MyPage = () => {
   const [savedRecipes, setSavedRecipes] = useState(true);
   const [preferences, setPreferences] = useState(false);
+  const [report, setReport] = useState(false);
   const [image, setImage] = useState();
   const [email, setEmail] = useState();
   const [nickname, setNickname] = useState();
   const [RecipeList, setRecipeList] = useState([]);
   const [ReviewList, setReviewList] = useState([]);
-  
+  const [SurveyList, setSurveyList] = useState([]);
   const UserInfo = useRecoilValue(userInfoState);
 
   const showSavedRecipes = async() => {
     setSavedRecipes(true);
     setPreferences(false);
+    setReport(false);
   };
   const showPreferences = async() => {
     setSavedRecipes(false);
     setPreferences(true);
+    setReport(false);
   };
-
-  
+  const showReport = async() => {
+    setSavedRecipes(false);
+    setPreferences(false);
+    setReport(true);
+  };
 
   useEffect(() => {
     showSavedRecipes();
 
     getMypage(UserInfo)
     .then((res) => {
-      console.log(res)
       setRecipeList(res.liked_recipe)
       setReviewList(res.review)
+      setSurveyList(res.member_survey)
      })
     .catch((err) => 
       console.log(err)
       )
 
-      getMember(UserInfo)
-      .then((res) => 
-        {
-        setEmail(res.email.split('_')[1])
-        setNickname(res.nickname)
-        setImage(res.profile_image_url)
-      })
-      .catch((err) => 
-        console.log(err)
-        )
-  
+    getMember(UserInfo)
+    .then((res) => 
+      {
+      setEmail(res.email.split('_')[1])
+      setNickname(res.nickname)
+      setImage(res.profile_image_url)
+    })
+    .catch((err) => 
+      console.log(err)
+      )
+      
+
+    
   },[]);
 
   return (
@@ -112,15 +117,15 @@ const MyPage = () => {
               <CategoryButton onClick={showPreferences}>PREFERENCES</CategoryButton>
               {preferences ? <UnderLine width="7.7rem" /> : null}
             </RowContainer>
+            <RowContainer>
+              <CategoryButton onClick={showReport}>WEEKLY REPORT</CategoryButton>
+              {report ? <UnderLine width="7.7rem" /> : null}
+            </RowContainer>
           </BoxContainer>
         </SpaceBetweenContainer>
-        
-        <SpaceBetweenContainer>
-          <div>
-            {savedRecipes ? <SavedRecipeList RecipeList={RecipeList} ReviewList={ReviewList} UserInfo={UserInfo} /> : null}
-            {preferences ? <Preferences /> : null}
-          </div>
-        </SpaceBetweenContainer>
+          {savedRecipes ? <SavedRecipeList RecipeList={RecipeList} ReviewList={ReviewList} UserInfo={UserInfo} /> : null}
+          {preferences ? <Preferences SurveyList={SurveyList} /> : null}
+          {report ? <Report /> : null}
       </Container>
     </>
   );

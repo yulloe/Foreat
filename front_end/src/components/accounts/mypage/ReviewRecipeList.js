@@ -7,6 +7,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-bottom: 10rem;
 `;
 
 const Top = styled.div`
@@ -14,6 +15,7 @@ const Top = styled.div`
   justify-content: space-between;
   width: 100%;
   margin-top: 3rem;
+  margin-bottom: 1.5rem;
   font-family: Playfair Display;
 `;
 
@@ -21,6 +23,7 @@ const Title = styled.div`
   display: flex;
   font-family: Playfair Display;
   font-size: 32px;
+  font-weight: 600;
 `;
 
 const See = styled.a`
@@ -29,15 +32,28 @@ const See = styled.a`
   font-size: 20px;
   margin-left: auto;
   text-decoration: none;
+  color: #ed8141;
+  font-family : Work Sans;
 `;
+
+const Sub = styled.div`
+  margin-top: 1rem;
+  margin-bottom: 3rem;
+  font-size: 20px;
+  font-weight: bold;
+`
 
 const ReviewList = ({ ReviewList, UserInfo }) => {
   return (
     <Container>
       <Top>
-        <Title>All Reviews</Title>
+        <Title>My Reviews</Title>
+        {ReviewList.length !== 0 ?
         <See href={"/" + UserInfo + "/mypage/reviews"}>See all →</See>
+        :null}
       </Top>
+      
+      {ReviewList.length !== 0 ?
       <div
         style={{ display: "flex", justifyContent: "center", flexWrap: "wrap" }}
       >
@@ -51,7 +67,8 @@ const ReviewList = ({ ReviewList, UserInfo }) => {
             recipe_seq={review.recipe_seq}
           />
         ))}
-      </div>
+      </div> : <Sub>Please register your review.</Sub>
+      }
     </Container>
   );
 };

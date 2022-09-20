@@ -6,7 +6,11 @@ import { userInfoState, reviewDataState } from 'atoms/atoms';
 import { getMember } from "api/MyPageApi";
 import { getReviewList } from "api/RecipeDetailApi";
 import { createReview } from "api/ReviewApi";
-import ReviewCard from "components/recipeDetail/ReviewCard";
+
+import ReviewCard from "components/recipeDetail/ReviewCard"
+import { Alert } from "components/commons/Alert";
+
+
 
 const Container = styled.div`
   display: flex;
@@ -106,15 +110,48 @@ const ReviewForm = ({ recipeId }) => {
   const [ image_url, setImageUrl] = useState();
   const [ fileName, setFileName ] = useState();
   const [ reviews, setReviews] = useState([]); 
-  const [ reviewData, setReviewData ] = useRecoilState(reviewDataState)
+
+  const onFileUpload = (event) => { 
+    const file = event.target.files[0]
+    if (file.size > 1048576) {
+      event.preventDefault();
+      Alert("❌ File Size Is Too Big. Max 1MB.")
+      return;
+    } else {
+      setImageUrl(file);
+      setFileName(file.name)
+    }
+  };
   
-  console.log(555, reviewData.id)
+  const onClickSave = async (event) => {
+    event.preventDefault();
+    if (!ratings) {
+      Alert("❌ Please Rate The Recipe.")
+      return;
+    }
+    if (!content) {
+      Alert("❌ Please Write A Comment.")
+      return;
+    }
+    const formData = new FormData();
+    formData.append("image", image_url);
+    formData.append("content", content);
+    formData.append("ratings", ratings);
 
+
+    const response = await createReview(recipeId, formData)
+    if (response) {
+      const result = await getReviewList(recipeId)
+      setReviews(result.data)
+      // 리뷰 작성 후 입력 값 초기화
+      setRatings(0)
+      setContent("")
+    }
+  }
+  
   useEffect(() => {
-
     getMember(UserInfo)
     .then((res) => {
-      console.log(res)
       setProfileImage(res.profile_image_url)
      })
     .catch((err) => 
@@ -131,13 +168,16 @@ const ReviewForm = ({ recipeId }) => {
 
   },[]);
 
-  const onFileUpload = (event) => { 
-    // 파일 이미지 크기 제한해야됨?!
-    const file = event.target.files[0]
-    setImageUrl(file);
-    setFileName(file.name)
-  };
+  useEffect(()=> {
+    getReviewList(recipeId).then((res) => {
+      setReviews(res.data)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }, [reviews])
   
+
   const onClickSave = async (event) => {
     event.preventDefault();
     console.log(content)
@@ -194,19 +234,40 @@ const ReviewForm = ({ recipeId }) => {
               multiple="multiple"
               accept="image/jpg, image/png, image/jpeg"
               style={{display: "none"}}
+
             />
-            <Button onClick={onClickSave}>SAVE</Button>
-          </ButtonContainer>
-        </div>
-      </Form>
+            <InputContent placeholder="WRITE YOUR REVIEW HERE"
+              value={content}
+              maxLength="1000"
+              onChange={
+                (e)=> setContent(e.target.value)
+              }/>
+            <ButtonContainer>
+            <FileLabel>{ fileName }</FileLabel>
+            <label htmlFor="input-file">
+              UPLOAD
+            </label>
+              <input 
+                type="file"
+                id="input-file" 
+                onChange={onFileUpload}
+                multiple="multiple"
+                accept="image/jpg, image/png, image/jpeg"
+                style={{display: "none"}}
+              />
+              <Button onClick={onClickSave}>SAVE</Button>
+            </ButtonContainer>
+          </div>
+        </Form>
+      </div>
       <CardContainer>
         <div style={{display:"flex", justifyContent:"center", flexWrap:"wrap" }}>
-            { reviews.map((review) => ( 
+            { reviews.length ? reviews.map((review) => ( 
               <ReviewCard
                 key={review.id}
                 {...review}
               />
-            ))}
+            )): null}
           </div>
       </CardContainer>
     </Container>

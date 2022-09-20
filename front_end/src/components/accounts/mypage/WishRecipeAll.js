@@ -53,7 +53,7 @@ const Result = styled.div`
 const CardContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: start;
 `
 
 const PageContainer = styled.div`
@@ -68,10 +68,9 @@ const WishRecipeAll = () => {
   const [ page, setPage ] = useState(1);
 
   const handlePageChange = async(page) => {
-    console.log(page)
+    window.scrollTo(0, 0)
     setPage(page);
     const result = await getWish(page, UserInfo);
-    console.log(result)
     setResultList(result.likes_list);
   }
 

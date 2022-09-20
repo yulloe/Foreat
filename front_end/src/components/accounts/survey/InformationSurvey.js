@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+import Title from "components/commons/Title"
+import BottomButton from "components/accounts/survey/BottomButton";
+import Button from "components/accounts/survey/Button";
+
 
 
 const Container = styled.div`
   min-height: 100vh;
 `
 
-const Title = styled.div`
-  display: flex;
-  justify-content: center;
-  font-size: ${(props) => (props.fs ? props.fs : "3rem")};
-  font-weight: ${(props) => (props.fw ? props.fw : "300")};
-  margin-top: ${(props) => (props.mt ? props.mt : "")};
-  margin-left: ${(props) => (props.ml ? props.ml : "")};
-  margin-bottom: ${(props) => (props.mb ? props.mb : "")};
-  margin-right: ${(props) => (props.mr ? props.mr : "")};
+const gradient = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 `
 
 const Question = styled.div`
@@ -22,12 +27,15 @@ const Question = styled.div`
   justify-content: center;
   .line {
     width: 16.6%;
-    height: 1.2rem;
-    background-color: #ED8141;
+    height: 1.7rem;
+    box-shadow: 0px 5px 5px 0px #d3d3d3;
+    background: linear-gradient(-45deg, #ED8141, #ED8141, #f0e140, #ea0ba7);
+    background-size: 400% 400%;
+    animation: ${gradient} 5s ease infinite;
   }
   .box {
     width: 50rem;
-    height: 29rem;
+    height: 34rem;
     border: 0px solid grey;
     box-shadow: 3px 5px 5px 5px #d3d3d3;
   }
@@ -43,34 +51,6 @@ const SpaceBetweenContainer = styled.div`
   justify-content: space-around;
 `
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`
-
-const Button = styled.button`
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: 1rem;
-  width: ${(props) => (props.w ? props.w : "")};
-  height: ${(props) => (props.h ? props.h : "")};
-  background-color: white;
-  border: 1px solid grey;
-  margin-top: ${(props) => (props.mt ? props.mt : "")};
-  margin-left: ${(props) => (props.ml ? props.ml : "")};
-  margin-right: ${(props) => (props.mr ? props.mr : "")};
-  &:hover {
-    color: ${(props) =>
-      props.hoverColor ? props.hoverColor : "#000"};
-  }
-`
-
-const SelectContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 3rem;
-`
-
 const SelectContent = styled.select`
   width: 20rem;
   height: 2rem;
@@ -78,28 +58,29 @@ const SelectContent = styled.select`
   font-family: Work Sans;
 `
 
-const BottomButton =styled.a`
-  font-size: 1.2rem;
-  font-weight: 300;
-  cursor: pointer;
-  border: none;
-  float: ${(props) => (props.f ? props.f : "")};
-  margin-top: ${(props) => (props.mt ? props.mt : "")};
-  margin-bottom: ${(props) => (props.mb ? props.mb : "")};
-  margin-left: ${(props) => (props.ml ? props.ml : "")};
-  margin-right: ${(props) => (props.mr ? props.mr : "")};
-`
 
-const InformationSurvey = () => {
-  const [genderShow, setGenderShow] = useState();
+
+const InformationSurvey = ({form, propFunction, nextSteps}) => {
+  const { age, gender } = form  // 필요한 키들만 비구조할당으로 선언
+  const [womanShow, setWomanShow] = useState(gender);
+  const [manShow, setManShow] = useState((gender === null ? false : !gender));
 
   const survey = (info) => {
     if (info === true) {
-      setGenderShow(true)
+      setWomanShow(true);
+      setManShow(false);
+      propFunction(['gender', true])
     } else {
-      setGenderShow(false)
+      setManShow(true)
+      setWomanShow(false)
+      propFunction(['gender', false])
     }
   }
+  
+  const handleChange = (e) => {
+    propFunction(['age', e.target.value])
+  };
+
   return (
     <>
       <Container>
@@ -107,24 +88,25 @@ const InformationSurvey = () => {
           <div className='box'>
             <div className='line'></div>
             <div className='number'>1/6</div>
-            <Title fs="2.5rem" fw="300" mt="2rem" mb="1rem">Select your information</Title>
-            <Title fs="1.2rem" fw="200" mb="2rem">Check your gender and age.</Title>
-            <ButtonContainer>
+            <Title ff="work sans" fs="2.5rem" fw="300" mt="2rem" mb="1rem" style={{display: "flex", justifyContent: "center"}}>Select your information</Title>
+            <Title ff="work sans" fs="1.2rem" fw="300" mt="3.5rem" style={{display: "flex", justifyContent: "center"}}>
+              Please check your gender.
+            </Title >
+            <div style={{display: "flex", justifyContent: "center"}}>
               <div style={{width: "26rem"}}>
                 <SpaceBetweenContainer>
-                  <Button mt="1rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
-                    Man
-                  </Button>
-                  <Button mt="1rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
-                    Woman
-                  </Button>
+                  <Button mt="1rem" w="12rem" h="5rem" name="man" boxColor={manShow ? "#ED8141" : null} onClick={()=>survey(false)} />
+                  <Button mt="1rem" w="12rem" h="5rem" name="woman" boxColor={womanShow ? "#ED8141" : null} onClick={()=>survey(true)} />
                 </SpaceBetweenContainer>
               </div>
-            </ButtonContainer>
-            <SelectContainer>
-              <Title mt="0.5rem" fs="1rem" mr="0.5rem">AGE</Title>
-              <SelectContent>
-                <option value="0" selected disabled>select age</option>
+            </div>
+            <Title ff="work sans" fs="1.2rem" fw="300" mt="3.5rem" style={{display: "flex", justifyContent: "center"}}>
+              Please check your age.
+            </Title >
+            <div style={{display: "flex", justifyContent: "center", marginTop: "1rem"}}>
+              <Title ff="work sans" mt="0.5rem" fs="1rem" mr="0.5rem">AGE</Title>
+              <SelectContent defaultValue={age} onChange={(e) => handleChange(e)}>
+                <option value="0" defaultValue>select age</option>
                 <option value="1">15-19 years old</option>
                 <option value="2">20-29 years old</option>
                 <option value="3">30-49 years old</option>
@@ -132,8 +114,8 @@ const InformationSurvey = () => {
                 <option value="5">65-74 years old</option>
                 <option value="6">75 years of age or older</option>
               </SelectContent>
-            </SelectContainer>
-            <BottomButton f="right" mt="1.5rem" mr="2rem">Continue</BottomButton>
+            </div>
+            <BottomButton f="right" mt="3rem" mr="2rem" name="Continue" onClick={nextSteps} />
           </div>
         </Question>
       </Container>

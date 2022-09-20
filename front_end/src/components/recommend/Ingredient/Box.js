@@ -2,13 +2,15 @@ import { useDrag } from 'react-dnd';
 import { ItemTypes } from './ItemTypes';
 import React from 'react';
 
+
 const style = {
   cursor: 'pointer',
   float: 'left',
   width: '5.5rem',
   height: '5.5rem',
-  borderRadius: '55%'
+  borderRadius: '55%',
 };
+
 
 const Box = ({ src, title }) =>  {
     const [{ isDragging }, drag] = useDrag(() => ({
@@ -29,14 +31,16 @@ const Box = ({ src, title }) =>  {
     const opacity = isDragging ? 0.4 : 1;
     
     return (
-        <img 
-            src={src} 
-            ref={drag} 
-            style={{  ...style, opacity }} 
-            alt={title} 
-            data-testid={`box-${src}`} 
-            title={title}
-        />
+        <>
+            <img
+                src={src} 
+                ref={drag} 
+                style={{  ...style, opacity }} 
+                alt={title} 
+                data-testid={`box-${src}`} 
+                title={title}
+            />
+        </>
 	);
 };
 

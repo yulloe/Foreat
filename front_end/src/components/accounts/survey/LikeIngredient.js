@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 import beef from "assets/img/IngredientItem/beef.jpg"
 import rice from "assets/img/IngredientItem/rice.jpg"
 import cheese from "assets/img/IngredientItem/cheese.jpg"
@@ -10,11 +10,51 @@ import pork from "assets/img/IngredientItem/pork.jpg"
 import potato from "assets/img/IngredientItem/potato.jpg"
 import tomato from "assets/img/IngredientItem/tomato.jpg"
 import seafood from "assets/img/IngredientItem/seafood.PNG"
+import BottomButton from "components/accounts/survey/BottomButton";
+
 
 
 
 const Container = styled.div`
   min-height: 100vh;
+  margin-bottom: 10rem;
+`
+
+const gradient = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`
+
+const Question = styled.div`
+  display: flex;
+  justify-content: center;
+  .line {
+    width: 83%;
+    height: 1.7rem;
+    box-shadow: 0px 5px 5px 0px #d3d3d3;
+    background-color: #ED8141;
+    background: linear-gradient(-45deg, #ED8141, #ED8141, #f0e140, #ea0ba7);
+    background-size: 400% 400%;
+    animation: ${gradient} 5s ease infinite;
+  }
+  .box {
+    width: 50rem;
+    height: 55rem;
+    border: 0px solid grey;
+    box-shadow: 3px 5px 5px 5px #d3d3d3;
+  }
+  .number {
+    display: flex;
+    justify-content: flex-end;
+    margin: 1.5rem 1.5rem 0 0;
+  }
 `
 
 const Title = styled.div`
@@ -26,27 +66,6 @@ const Title = styled.div`
   margin-left: ${(props) => (props.ml ? props.ml : "")};
   margin-bottom: ${(props) => (props.mb ? props.mb : "")};
   margin-right: ${(props) => (props.mr ? props.mr : "")};
-`
-
-const Question = styled.div`
-  display: flex;
-  justify-content: center;
-  .line {
-    width: 83%;
-    height: 1.2rem;
-    background-color: #ED8141;
-  }
-  .box {
-    width: 50rem;
-    height: 51.2rem;
-    border: 0px solid grey;
-    box-shadow: 3px 5px 5px 5px #d3d3d3;
-  }
-  .number {
-    display: flex;
-    justify-content: flex-end;
-    margin: 1.5rem 1.5rem 0 0;
-  }
 `
 
 const SpaceBetweenContainer = styled.div`
@@ -62,33 +81,118 @@ const Button = styled.button`
   font-size: 1rem;
   cursor: pointer;
   border-radius: 1rem;
-  box-shadow: 1px 1px 10px 3px #e2e2e2;
+  font-family: work sans;
+  box-shadow: 1px 1px 10px 3px ${(props) => (props.boxColor ? props.boxColor : "#e2e2e2")};
   width: ${(props) => (props.w ? props.w : "")};
   height: ${(props) => (props.h ? props.h : "")};
   background-color: white;
-  border: 1px solid grey;
+  border: none;
   margin-top: ${(props) => (props.mt ? props.mt : "")};
   margin-left: ${(props) => (props.ml ? props.ml : "")};
   margin-right: ${(props) => (props.mr ? props.mr : "")};
   &:hover {
     color: ${(props) =>
-      props.hoverColor ? props.hoverColor : "#000"};
+      props.hoverColor ? props.hoverColor : "#a2a2a2"};
   }
 `
 
-const BottomButton =styled.a`
-  font-size: 1.2rem;
-  font-weight: 300;
-  cursor: pointer;
-  border: none;
-  float: ${(props) => (props.f ? props.f : "")};
-  margin-top: ${(props) => (props.mt ? props.mt : "")};
-  margin-bottom: ${(props) => (props.mb ? props.mb : "")};
-  margin-left: ${(props) => (props.ml ? props.ml : "")};
-  margin-right: ${(props) => (props.mr ? props.mr : "")};
-`
 
-const LikeIngredient = () => {
+
+const LikeIngredient = ({form, propFunction, prevSteps, nextSteps}) => {
+  const { liked_ingredient } = form;
+  const [beefShow, getBeefShow] = useState((liked_ingredient.includes('beef')));
+  const [chickenShow, getChickenShow] = useState((liked_ingredient.includes('chicken')));
+  const [porkShow, getPorkShow] = useState((liked_ingredient.includes('pork')));
+  const [seafoodShow, getSeafoodShow] = useState((liked_ingredient.includes('seafood')));
+  const [riceShow, getRiceShow] = useState((liked_ingredient.includes('rice')));
+  const [noodleShow, getNoodleShow] = useState((liked_ingredient.includes('noodle')));
+  const [cheeseShow, getCheeseShow] = useState((liked_ingredient.includes('cheese')));
+  const [potatoShow, getPotatoShow] = useState((liked_ingredient.includes('potato')));
+  const [tomatoShow, getTomatoShow] = useState((liked_ingredient.includes('tomato')));
+  const [mushroomShow, getMushroomShow] = useState((liked_ingredient.includes('mushroom')));
+
+  const getLikeIngredient = (state) => {
+    if (state === "beef") {
+      getBeefShow(!beefShow);
+      if (beefShow === true) {
+        propFunction([true, "beef"]);
+      } else {
+        propFunction([false, "beef"]);
+      }
+    }
+    if (state === "chicken") {
+      getChickenShow(!chickenShow);
+      if (chickenShow === true) {
+        propFunction([true, "chicken"]);
+      } else {
+        propFunction([false, "chicken"]);
+      }
+    }
+    if (state === "pork") {
+      getPorkShow(!porkShow);
+      if (porkShow === true) {
+        propFunction([true, "pork"]);
+      } else {
+        propFunction([false, "pork"]);
+      }
+    }
+    if (state === "seafood") {
+      getSeafoodShow(!seafoodShow);
+      if (seafoodShow === true) {
+        propFunction([true, "seafood"]);
+      } else {
+        propFunction([false, "seafood"]);
+      }
+    }
+    if (state === "rice") {
+      getRiceShow(!riceShow);
+      if (riceShow === true) {
+        propFunction([true, "rice"]);
+      } else {
+        propFunction([false, "rice"]);
+      }
+    }
+    if (state === "noodle") {
+      getNoodleShow(!noodleShow);
+      if (noodleShow === true) {
+        propFunction([true, "noodle"]);
+      } else {
+        propFunction([false, "noodle"]);
+      }
+    }
+    if (state === "cheese") {
+      getCheeseShow(!cheeseShow);
+      if (cheeseShow === true) {
+        propFunction([true, "cheese"]);
+      } else {
+        propFunction([false, "cheese"]);
+      }
+    }
+    if (state === "potato") {
+      getPotatoShow(!potatoShow);
+      if (potatoShow === true) {
+        propFunction([true, "potato"]);
+      } else {
+        propFunction([false, "potato"]);
+      }
+    }
+    if (state === "tomato") {
+      getTomatoShow(!tomatoShow);
+      if (tomatoShow === true) {
+        propFunction([true, "tomato"]);
+      } else {
+        propFunction([false, "tomato"]);
+      }
+    }
+    if (state === "mushroom") {
+      getMushroomShow(!mushroomShow);
+      if (mushroomShow === true) {
+        propFunction([true, "mushroom"]);
+      } else {
+        propFunction([false, "mushroom"]);
+      }
+    }
+  }
   return (
     <>
     <Container>
@@ -96,84 +200,84 @@ const LikeIngredient = () => {
           <div className='box'>
             <div className='line'></div>
             <div className='number'>5/6</div>
-            <Title fs="2.5rem" fw="300" mt="2rem" mb="1rem">Select your information</Title>
-            <Title fs="1.2rem" fw="200" mb="1rem">Check your favorite ingredient.</Title>
-            <div style={{display: "flex", justifyContent: "center"}}>
+            <Title ff="work sans" fs="2.5rem" fw="300" mt="2rem" mb="1rem" style={{display: "flex", justifyContent: "center"}}>Select your information</Title>
+            <Title ff="work sans" fs="1.2rem" fw="300" mb="1rem" style={{display: "flex", justifyContent: "center"}}>Check your favorite ingredient.</Title>
+            <div style={{display: "flex", justifyContent: "center", marginTop: "3rem"}}>
               <div style={{width: "26rem"}}>
                 <SpaceBetweenContainer>
-                  <Button mt="1rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="1rem" w="12rem" h="5rem" boxColor={beefShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("beef")}>
                     <ButtonContainer>
                       <img src={beef} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Beef</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Beef</Title>
                     </ButtonContainer>
                   </Button>
-                  <Button mt="1rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="1rem" w="12rem" h="5rem" boxColor={chickenShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("chicken")}>
                     <ButtonContainer>
                       <img src={chicken} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Chicken</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Chicken</Title>
                     </ButtonContainer>
-                  </Button>
+                  </Button> 
                 </SpaceBetweenContainer>
                 <SpaceBetweenContainer>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={porkShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("pork")}>
                     <ButtonContainer>
                       <img src={pork} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Pork</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Pork</Title>
                     </ButtonContainer>
                   </Button>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={seafoodShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("seafood")}>
                     <ButtonContainer>
                       <img src={seafood} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Seafood</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Seafood</Title>
                     </ButtonContainer>
                   </Button>
                 </SpaceBetweenContainer>
                 <SpaceBetweenContainer>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={riceShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("rice")}>
                     <ButtonContainer>
                       <img src={rice} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Rice</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Rice</Title>
                     </ButtonContainer>
                   </Button>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={noodleShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("noodle")}>
                     <ButtonContainer>
                       <img src={noodle} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Noodle</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Noodle</Title>
                     </ButtonContainer>
                   </Button>
                 </SpaceBetweenContainer>
                 <SpaceBetweenContainer>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={cheeseShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("cheese")}>
                     <ButtonContainer>
                       <img src={cheese} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Cheese</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Cheese</Title>
                     </ButtonContainer>
                   </Button>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={potatoShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("potato")}>
                     <ButtonContainer>
                       <img src={potato} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Potato</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Potato</Title>
                     </ButtonContainer>
                   </Button>
                 </SpaceBetweenContainer>
                 <SpaceBetweenContainer>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={tomatoShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("tomato")}>
                     <ButtonContainer>
                       <img src={tomato} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Tomato</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Tomato</Title>
                     </ButtonContainer>
                   </Button>
-                  <Button mt="2rem" w="12rem" h="5rem" hoverColor="#a2a2a2">
+                  <Button mt="2rem" w="12rem" h="5rem" boxColor={mushroomShow ? "#ED8141" : null } onClick={()=>getLikeIngredient("mushroom")}>
                     <ButtonContainer>
                       <img src={mushroom} alt="beef" style={{width: "3rem", height: "3rem", marginLeft:"1.2rem", borderRadius: "10rem"}} />
-                      <Title fs="1rem" mt="1rem" ml="1rem">Mushroom</Title>
+                        <Title fs="1rem" mt="1rem" ml="1rem" fw="400">Mushroom</Title>
                     </ButtonContainer>
                   </Button>
                 </SpaceBetweenContainer>
               </div>
             </div>
-            <BottomButton f="left" mt="1.5rem" ml="2rem">Back</BottomButton>
-            <BottomButton f="right" mt="1.5rem" mr="2rem">Continue</BottomButton>
+            <BottomButton f="left" mt="3.5rem" ml="2rem" name="Back" onClick={prevSteps}>Back</BottomButton>
+            <BottomButton f="right" mt="3.5rem" mr="2rem" name="Continue" onClick={nextSteps}>Continue</BottomButton>
           </div>
         </Question>
       </Container>
