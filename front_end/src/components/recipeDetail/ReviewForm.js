@@ -12,6 +12,7 @@ import { Alert } from "components/commons/Alert";
 
 
 
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -57,6 +58,7 @@ const InputContent = styled.textarea`
     box-shadow: 0 0 1px 0 #969696;
   }
 `
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: end;
@@ -75,6 +77,7 @@ const ButtonContainer = styled.div`
     }
   }
 `
+
 const FileLabel = styled.div`
   align-self: center;
   margin: 0.5rem 0 0 0;
@@ -95,12 +98,8 @@ const Button = styled.button`
     cursor: pointer;
   }
 `
-
   
-const CardContainer = styled.div`
-
-`
-
+const CardContainer = styled.div``
 
 const ReviewForm = ({ recipeId }) => {
   const UserInfo = useRecoilValue(userInfoState);

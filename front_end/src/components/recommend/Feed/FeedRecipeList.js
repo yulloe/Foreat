@@ -4,8 +4,7 @@ import Title from "components/commons/Title";
 import { getRecommendRecipeList } from "api/RecommendApi";
 import Card from "components/commons/Card";
 import { CircularProgress } from "@mui/material";
-
-
+import { setApiHeaders } from "api/Axios";
 
 const Container = styled.div`
   margin-bottom: 10rem;
@@ -45,7 +44,6 @@ const BorderLine = styled.div`
   margin-right: ${(props) => (props.mr ? props.mr : "")};
 `
 
-
 const FeedRecipeList = () => { 
   const [forYouRecipe, setForYouRecipe] = useState();
   const [youLikeRecipe, setYouLikeRecipe] = useState();
@@ -55,9 +53,9 @@ const FeedRecipeList = () => {
   const [memberType, setMemberType] = useState();
   const [number, setNumber] = useState(2);
 
-
   const getRecipeList = async(type, page) => {
     setIsLoading(true);
+    setApiHeaders();
     if (type === "foryou") {
       if (page === 1) {
         setNumber(2);

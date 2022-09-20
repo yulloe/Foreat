@@ -25,6 +25,7 @@ const TextContainer = styled.div`
     border-bottom: 1px solid black;
   }
 `
+
 const CardContainer = styled.div`
   display: flex;
   flex-flow: wrap;
@@ -47,7 +48,7 @@ const RelatedRecipeList = ({ ingredients_recommend, nutrient_recommend }) => {
           )) : null }
       </CardContainer>
       <TextContainer>
-        <div className="text">Nutritionally Balanced</div>
+        <div className="text">Nutritionally Similar</div>
         <div className="line"/>
       </TextContainer>
       <CardContainer>

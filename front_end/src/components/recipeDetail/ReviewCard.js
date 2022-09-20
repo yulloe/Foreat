@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import Rating from '@mui/material/Rating';
 
-
 import iconDelete from "assets/img/icon_delete.png";
 import iconUpdate from "assets/img/icon_update.png";
 import FOREAT_logo from "assets/img/FOREAT_logo.png";
@@ -28,11 +27,11 @@ const FlexContainer = styled.div`
   display: flex;
   flex-direction: row;
 `
+
 const SpaceBetweenContainer = styled.div`
   display: flex;
   justify-content: space-between;
 `
-
 
 const ProfileImgWrapper = styled.div`
   display: flex;
@@ -85,7 +84,6 @@ const Contents = styled.div`
     background-color: #7e7e7e;
     border-radius: 10px;
   }
-
 `
 
 const Icon = styled.img`
@@ -117,6 +115,7 @@ const ReviewCard = ({ recipe_seq, id, member_nickname, image_url,
     await deleteReview(id)
     window.location.reload();
   }
+
   const onClickUpdate = () => {
     setReviewData({
       id : id,
@@ -127,6 +126,7 @@ const ReviewCard = ({ recipe_seq, id, member_nickname, image_url,
       ratings: ratings
     });
   }
+
 
   return (
       <Container>
