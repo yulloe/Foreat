@@ -23,4 +23,12 @@ export const isLoginState = atom({
   key: "isLoginState",
   default: false,
   effects_UNSTABLE: [persistAtom],
+
 });
+
+
+export const reviewDataState = atom({
+  key: 'reviewDataState',
+  default: []
+})
+
