@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Rating from '@mui/material/Rating';
-import { useRecoilValue } from 'recoil';
-import { userInfoState } from 'atoms/atoms';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { userInfoState, reviewDataState } from 'atoms/atoms';
 import { getMember } from "api/MyPageApi";
 import { getReviewList } from "api/RecipeDetailApi";
 import { createReview } from "api/ReviewApi";
+
 import ReviewCard from "components/recipeDetail/ReviewCard"
 import { Alert } from "components/commons/Alert";
+
+
 
 
 const Container = styled.div`
@@ -18,7 +21,7 @@ const Container = styled.div`
 
 const Form = styled.form`
   display: flex;
-  margin: 1rem 5rem 4rem 5rem;
+  margin: 1rem 5rem 2rem 5rem;
   padding: 2rem;
   width: 58rem;
   height: 11rem;
@@ -55,6 +58,7 @@ const InputContent = styled.textarea`
     box-shadow: 0 0 1px 0 #969696;
   }
 `
+
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: end;
@@ -73,6 +77,7 @@ const ButtonContainer = styled.div`
     }
   }
 `
+
 const FileLabel = styled.div`
   align-self: center;
   margin: 0.5rem 0 0 0;
@@ -93,12 +98,8 @@ const Button = styled.button`
     cursor: pointer;
   }
 `
-
   
-const CardContainer = styled.div`
-
-`
-
+const CardContainer = styled.div``
 
 const ReviewForm = ({ recipeId }) => {
   const UserInfo = useRecoilValue(userInfoState);
@@ -109,7 +110,6 @@ const ReviewForm = ({ recipeId }) => {
   const [ fileName, setFileName ] = useState();
   const [ reviews, setReviews] = useState([]); 
 
-  
   const onFileUpload = (event) => { 
     const file = event.target.files[0]
     if (file.size > 1048576) {
@@ -137,6 +137,7 @@ const ReviewForm = ({ recipeId }) => {
     formData.append("content", content);
     formData.append("ratings", ratings);
 
+
     const response = await createReview(recipeId, formData)
     if (response) {
       if ( response.status === 201 ) {
@@ -162,10 +163,12 @@ const ReviewForm = ({ recipeId }) => {
 
     getReviewList(recipeId).then((res) => {
       setReviews(res.data)
+      console.log("ReviewList", res.data)
     })
     .catch((err) => {
       console.log(err)
     })
+
   },[]);
 
   useEffect(()=> {
@@ -177,20 +180,64 @@ const ReviewForm = ({ recipeId }) => {
     })
   }, [])
   
+
+  const onClickSave = async (event) => {
+    event.preventDefault();
+    console.log(content)
+    const formData = new FormData();
+    formData.append("image", image_url);
+    formData.append("content", content);
+    formData.append("ratings", ratings);
+
+    for (let key of formData.keys()) { console.log(key, ":", formData.get(key)); }
+    const response = await createReview(recipeId, formData)
+    if (response) {
+      const result = await getReviewList(recipeId)
+      setReviews(result.data)
+    }
+  }
+
   return (
     <Container>
-      <div style={{display: "flex", justifyContent: "center"}}>
-        <Form enctype="multipart/form-data">
-          <ImgWrapper>
-            <Img src={profileImage} alt="" />
-          </ImgWrapper>
-          <div style={{padding: "0.5rem 0"}}>
-            <Rating
-              name="simple-controlled"
-              value={ratings}
-              onChange={(event, newRatings) => {
-                setRatings(newRatings);
-              }}
+      <Form enctype="multipart/form-data">
+        <ImgWrapper>
+          <Img src={profileImage} alt="" />
+        </ImgWrapper>
+        <div style={{padding: "0.5rem 0"}}>
+          <Rating
+            name="simple-controlled"
+            value={reviewData.ratings}
+            onChange={(e, newRatings) => 
+              setReviewData((oldData) => [
+                ...oldData, {
+                  ratings: newRatings
+                }
+              ])
+            }
+          />
+          <InputContent placeholder="WRITE YOUR REVIEW HERE"
+            value={reviewData.content}
+            maxLength="1000"
+            onChange={
+              (e, newContent)=> setReviewData((oldData) => [
+                ...oldData,{
+                  content: newContent
+                }
+              ])
+            }/>
+          <ButtonContainer>
+          <FileLabel>{ fileName }</FileLabel>
+          <label htmlFor="input-file">
+            UPLOAD
+          </label>
+            <input 
+              type="file"
+              id="input-file" 
+              onChange={onFileUpload}
+              multiple="multiple"
+              accept="image/jpg, image/png, image/jpeg"
+              style={{display: "none"}}
+
             />
             <InputContent placeholder="WRITE YOUR REVIEW HERE"
               value={content}
@@ -221,14 +268,7 @@ const ReviewForm = ({ recipeId }) => {
             { reviews.length ? reviews.map((review) => ( 
               <ReviewCard
                 key={review.id}
-                reviewId={review.id}
-                recipeId={review.recipe_seq}
-                memberName={review.member_nickname}
-                profileImgUrl={review.profile_image_url}
-                imgUrl={review.image_url}
-                content={review.content}
-                ratings={review.ratings}
-                lastModifiedDate={review.last_modified_date}
+                {...review}
               />
             )): null}
           </div>

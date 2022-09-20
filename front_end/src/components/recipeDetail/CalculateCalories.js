@@ -15,6 +15,7 @@ const ExerciseContainer = styled.div`
   }
 `
 
+
 const TextContainer = styled.div`
   margin: 0 15rem;
   display: flex;
@@ -31,9 +32,11 @@ const CalculateCalories = ({ calories }) => {
     ["Tennis", 0.126]
   ]
   const weight = 60
+  
   const chooseRandom = (a) => {
     return a[Math.floor(Math.random()*a.length)];
   }
+  
   const randomItem = chooseRandom(exercises)
     return (
       <ExerciseContainer>

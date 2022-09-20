@@ -16,6 +16,7 @@ const TextContainer = styled.div`
     margin: 1rem 0;
   }
 `
+
 const Ingredients = ({ ingredients }) => {
   return (
     <TextContainer ta="right">

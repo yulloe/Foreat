@@ -38,18 +38,19 @@ const Container = styled.div`
   margin-bottom: 3rem;
 `
 
+
 const Title = styled.div`
   font-size: 2rem;
   font-weight: 400;
   margin: 3rem 2rem 0.5rem 0;
-`
+`;
 
 const CircleCardContainer = styled.div`
-  display: flex; 
+  display: flex;
   flex-wrap: wrap;
   justify-content: center;
   margin: 0 0 2rem 0;
-`
+`;
 
 const PopularIngredients = () => {
   const ingredients = [
@@ -95,5 +96,6 @@ const PopularIngredients = () => {
       </Container>
     )
 }
+ 
 
 export default PopularIngredients;

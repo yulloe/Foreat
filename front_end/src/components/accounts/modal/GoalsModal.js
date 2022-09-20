@@ -44,7 +44,14 @@ const ButtonContainer = styled.div`
   margin: 3rem;
 `;
 
-const GoalsModal = ({ setFlag, on, UserInfo, layoutId, setWidgetId, surveyList }) => {
+const GoalsModal = ({
+  setFlag,
+  on,
+  UserInfo,
+  layoutId,
+  setWidgetId,
+  surveyList,
+}) => {
   const [beginnerShow, setBeginnerShow] = useState();
   const [newCuisinShow, setNewCuisinShow] = useState();
   const [saveTimeShow, setSaveTimeShow] = useState();
@@ -53,13 +60,20 @@ const GoalsModal = ({ setFlag, on, UserInfo, layoutId, setWidgetId, surveyList }
   const [interestShow, setInterestShow] = useState();
 
   useEffect(() => {
-    setBeginnerShow(surveyList.beginner)
-    setNewCuisinShow(surveyList.recipe_challenger)
-    setSaveTimeShow(surveyList.timesaver)
-    setHealthyShow(surveyList.healthy_diet)
-    setDietShow(surveyList.lose_weight)
-    if (surveyList.beginner === false && surveyList.recipe_challenger === false && surveyList.timesaver === false &&
-      surveyList.healthy_diet === false && surveyList.lose_weight === false) {setInterestShow(true)}
+    setBeginnerShow(surveyList.beginner);
+    setNewCuisinShow(surveyList.recipe_challenger);
+    setSaveTimeShow(surveyList.timesaver);
+    setHealthyShow(surveyList.healthy_diet);
+    setDietShow(surveyList.lose_weight);
+    if (
+      surveyList.beginner === false &&
+      surveyList.recipe_challenger === false &&
+      surveyList.timesaver === false &&
+      surveyList.healthy_diet === false &&
+      surveyList.lose_weight === false
+    ) {
+      setInterestShow(true);
+    }
   }, []);
 
   const onClick = (event) => {
@@ -67,24 +81,31 @@ const GoalsModal = ({ setFlag, on, UserInfo, layoutId, setWidgetId, surveyList }
   };
 
   const onCheck = async () => {
-    if(beginnerShow === false && newCuisinShow === false && saveTimeShow === false &&
-      healthyShow === false && dietShow === false &&interestShow === false) Alert("🧡 Please Check your diet goal.")
-    else{
-    const formData = new FormData();
-    formData.append("beginner", beginnerShow);
-    formData.append("recipe_challenger", newCuisinShow);
-    formData.append("timesaver", saveTimeShow);
-    formData.append("healthy_diet", healthyShow);
-    formData.append("lose_weight", dietShow);
-    // for (let key of formData.keys()) { console.log(key, ":", formData.get(key)); }
-    editSurvey(UserInfo, formData)
-    setBeginnerShow(surveyList.beginner)
-    setNewCuisinShow(surveyList.recipe_challenger)
-    setSaveTimeShow(surveyList.timesaver)
-    setHealthyShow(surveyList.healthy_diet)
-    setDietShow(surveyList.lose_weight)
-    setWidgetId(null);
-    setFlag(true)
+    if (
+      beginnerShow === false &&
+      newCuisinShow === false &&
+      saveTimeShow === false &&
+      healthyShow === false &&
+      dietShow === false &&
+      interestShow === false
+    )
+      Alert("🧡 Please Check your diet goal.");
+    else {
+      const formData = new FormData();
+      formData.append("beginner", beginnerShow);
+      formData.append("recipe_challenger", newCuisinShow);
+      formData.append("timesaver", saveTimeShow);
+      formData.append("healthy_diet", healthyShow);
+      formData.append("lose_weight", dietShow);
+      // for (let key of formData.keys()) { console.log(key, ":", formData.get(key)); }
+      editSurvey(UserInfo, formData);
+      setBeginnerShow(surveyList.beginner);
+      setNewCuisinShow(surveyList.recipe_challenger);
+      setSaveTimeShow(surveyList.timesaver);
+      setHealthyShow(surveyList.healthy_diet);
+      setDietShow(surveyList.lose_weight);
+      setWidgetId(null);
+      setFlag(true);
     }
   };
 
@@ -145,40 +166,50 @@ const GoalsModal = ({ setFlag, on, UserInfo, layoutId, setWidgetId, surveyList }
         <div style={{ width: "26rem" }}>
           <SpaceBetweenContainer>
             <Button2
+
               bs={beginnerShow ? on : ""}
               mr="0px" 
+
               onClick={onBeginner}
               name="Beginner cook"
             />
 
             <Button2
+
               bs={newCuisinShow ? on : ""}
               mr="0px" 
+
               onClick={onNewCuisin}
               name="Try new cuisin"
             />
           </SpaceBetweenContainer>
           <SpaceBetweenContainer>
             <Button2
+
               bs={saveTimeShow ? on : ""}
               mr="0px" 
+
               onClick={onSaveTime}
               name="Save time"
             />
 
             <Button2
+
               bs={healthyShow ? on : ""}
               mr="0px" 
+
               onClick={onHealthy}
               name="Eat healty"
             />
           </SpaceBetweenContainer>
           <SpaceBetweenContainer>
+
             <Button2 bs={dietShow ? on : ""} mr="0px" onClick={onDiet} name="Try diet" />
 
             <Button2
               bs={interestShow ? on : ""}
               mr="0px" 
+
               onClick={onInterest}
               name="No interest"
             />

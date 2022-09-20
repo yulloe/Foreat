@@ -8,9 +8,6 @@ import { setApiHeaders } from "api/Axios";
 import { Link } from 'react-router-dom';
 
 
-
-
-
 const Container = styled.div`
   margin-bottom: 10rem;
 `
@@ -49,7 +46,6 @@ const BorderLine = styled.div`
   margin-right: ${(props) => (props.mr ? props.mr : "")};
 `
 
-
 const FeedRecipeList = () => { 
   const [forYouRecipe, setForYouRecipe] = useState();
   const [youLikeRecipe, setYouLikeRecipe] = useState();
@@ -58,7 +54,6 @@ const FeedRecipeList = () => {
   const [recipeList, setRecipeList] = useState([]);
   const [memberType, setMemberType] = useState();
   const [number, setNumber] = useState(2);
-
 
   const getRecipeList = async(type, page) => {
     setIsLoading(true);
